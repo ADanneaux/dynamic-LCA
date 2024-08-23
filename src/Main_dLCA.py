@@ -19,6 +19,11 @@ from scipy.stats import norm
 from scipy import signal
 import os
 
+# Importing modules
+import core_plotting_functions as pf
+import core_utilities as cu
+
+# Formatting
 matplotlib.rcParams['font.family'] = 'arial'
 matplotlib.rcParams["legend.frameon"] = True
 matplotlib.rcParams["legend.fancybox"] = False
@@ -151,62 +156,14 @@ Empty_pulse = 0*t_TOD
 SSPn = ['1-19','2-45','4-85']
 name_array = []
 
-#%% =========== Function to plot carbon decays ===========
-def plot_after_zeros(x, y, col, ax, style):
-    x = np.array(x)
-    y = np.array(y)
-    xs = x[y!=0]
-    ys = y[y!=0]
-    line = ax.plot(xs, ys, col, linestyle=style)
-    fill = ax.fill_between(xs, ys, 0, color=col, alpha=0.2)
-    return line, fill
 
-def plot_carbon_decay(f_C,f_C_Carb_notdivided,f_C_G_notdivided,f_C_G_credit_notdivided,t_TOD):
-    f_neg = f_C_G_notdivided[:len(t_TOD)]+f_C_Carb_notdivided[:len(t_TOD)]+f_C['incineration_pulse'][:len(t_TOD)]
-    
-    # Plotting decay
-    fix, ax = plt.subplots(1,1,figsize=(6,4))
-
-    #SOL
-    sol_line = plot_after_zeros(t_TOD, 1e-3*f_C['SOL'][:len(t_TOD)], 'darkgrey', ax, '-')
-    eol_line = plot_after_zeros(t_TOD, 1e-3*f_C['EOL'][:len(t_TOD)], 'black', ax, '-')
-    cre_line = plot_after_zeros(t_TOD, 1e-3*f_C['CRE'][:len(t_TOD)], 'red', ax, '-')
-    sin_line = plot_after_zeros(t_TOD, 1e-3*f_neg[:len(t_TOD)], 'green', ax, '-')
-    Gcr_line = plot_after_zeros(t_TOD, 1e-3*f_C_G_credit_notdivided[:len(t_TOD)], 'red', ax, '--')
-    
-    #Net
-    ax.plot(t_TOD, 1e-3*f_C['Net'][:len(t_TOD)],label='Net',color='gold')
-
-    ax.set_xlabel('Years since construction')
-    ax.set_ylabel('CO2 [kg]')
-    ax.set_xlim([-1,200])    
-    ax.axhline(0, color='black')
-    return fix, ax
-
-def plot_methane_decay(f_M,t_TOD):
-    # Plotting decay
-    fix, ax = plt.subplots(1,1,figsize=(6,4))
-
-    #SOL
-    sol_line = plot_after_zeros(t_TOD, 1e-3*f_M['SOL'][:len(t_TOD)], 'darkgrey', ax, '-')
-    eol_line = plot_after_zeros(t_TOD, 1e-3*f_M['EOL'][:len(t_TOD)], 'black', ax, '-')
-    cre_line = plot_after_zeros(t_TOD, 1e-3*f_M['CRE'][:len(t_TOD)], 'red', ax, '-')
-    Ebe_line = plot_after_zeros(t_TOD, 1e-3*f_M['EOL_bio_emissions_notdivided'][:len(t_TOD)], 'green', ax, '-')
-    Ebc_line = plot_after_zeros(t_TOD, 1e-3*f_M['EOL_bio_credit_notdivided'][:len(t_TOD)], 'green', ax, '--')
-
-
-    #Net
-    ax.plot(t_TOD, 1e-3*f_M['Net'][:len(t_TOD)],label='Net',color='gold')
-
-    ax.set_xlabel('Years since construction')
-    ax.set_ylabel('CO2 [kg]')
-    ax.set_xlim([-1,200])    
-    ax.axhline(0, color='black')
-    return fix, ax
 
 
 
 #%% Looping through buildings
+import importlib
+importlib.reload(cu)
+
 GWP_C_net_array = []
 GWP_M_array = []
 GWP_N_array = []
@@ -223,7 +180,7 @@ building_types = list(LCI_data.columns)
 
 
 
-for building_type in building_types[3]:#[25:35]:#[25:38]:
+for building_type in building_types[3:4]:#[25:35]:#[25:38]:
     print(building_type)
     Dynamic = bool(LCI_data[building_type]['Dynamic'])
     SSP = int(LCI_data[building_type]['SSP'])
@@ -237,25 +194,12 @@ for building_type in building_types[3]:#[25:35]:#[25:38]:
 
     degradable_carbon = pine_mass*0.5*0.23   #tons of C (max 23% of wood subject to decay)
 
-    Data_C ={}
+
+    Data_C  =cu.get_LCI_data(LCI_data,building_type,'C')
     Data_C['Biopulse'] = pine_mass*0.5*3.67#[kg] C & CO2 conversion
 
-    Data_C['SOL']= float(LCI_data[building_type]['C_SOL'])  #[kg]
-    Data_C['EOL']= float(LCI_data[building_type]['C_EOL'])#-incineration_share*Data_C['Biopulse']  #[kg]
-    Data_C['CRE']= float(LCI_data[building_type]['C_CRE'])  #[kg]
-
-    print(Data_C['Biopulse']-Data_C['EOL'])
-
-    Data_M ={}
-    Data_M['SOL']= float(LCI_data[building_type]['M_SOL'])  #[kg]
-    Data_M['EOL']= float(LCI_data[building_type]['M_EOL'])  #[kg]
-    Data_M['CRE']= float(LCI_data[building_type]['M_CRE'])  #[kg]
-
-
-    Data_N ={}
-    Data_N['SOL']= float(LCI_data[building_type]['N_SOL'])  #[kg]
-    Data_N['EOL']= float(LCI_data[building_type]['N_EOL'])  #[kg]
-    Data_N['CRE']= float(LCI_data[building_type]['N_CRE'])  #[kg]
+    Data_M  =cu.get_LCI_data(LCI_data,building_type,'M')
+    Data_N  =cu.get_LCI_data(LCI_data,building_type,'N')
 
     ConcreteVolume= float(LCI_data[building_type]['ConcreteVolume'])   #[m3]
     Area_in= float(LCI_data[building_type]['Area_in'])                 #[m2]
@@ -311,46 +255,39 @@ for building_type in building_types[3]:#[25:35]:#[25:38]:
     yN2O = [np.exp(-(x)/tau_N2O) for x in t]
 
 
-    #
-
-    Emissions_C = {}
-    Emissions_M = {}
-    Emissions_N = {}
-    for pulse in ['SOL',  'EOL', 'CRE']:
-        Emissions_C[pulse]=Data_C[pulse]
-        Emissions_M[pulse]=Data_M[pulse]
-        Emissions_N[pulse]=Data_N[pulse]
-
+    
+    # Initiate emissions dictionnaries
+    Emissions_C = cu.set_emissions(Data_C)
+    Emissions_M = cu.set_emissions(Data_M)
+    Emissions_N = cu.set_emissions(Data_N)
     Emissions_C['incineration_pulse'] = Data_C['Biopulse'] * incineration_share
-    Emissions_M['incineration_pulse'] = 0
-    Emissions_N['incineration_pulse'] = 0
 
-    Pulse_C = {}
-    Pulse_M = {}
-    Pulse_N = {}
-    for pulse in ['SOL', 'EOL', 'CRE','incineration_pulse']:
-        Pulse_C[pulse]=np.zeros(len(t_TOD))
-        Pulse_M[pulse]=np.zeros(len(t_TOD))
-        Pulse_N[pulse]=np.zeros(len(t_TOD))
+    
+    # Initiate pulse dictionnaries
+    Pulse_C = cu.initiate_pulse_dictionnaries(len(t_TOD))
+    Pulse_M = cu.initiate_pulse_dictionnaries(len(t_TOD))
+    Pulse_N = cu.initiate_pulse_dictionnaries(len(t_TOD))
+
+    # Place emissions in 
+    Pulse_C = cu.place_emissions_in_pulse(Pulse_C, Emissions_C, t_TOD, Life, Dynamic)
+    # if Dynamic:
+
+        
+    #     pulse_time = [np.where(t_TOD==0),len(t_TOD[t_TOD<Life])-1,len(t_TOD[t_TOD<Life])-1,len(t_TOD[t_TOD<Life])-1]
+    #     pulses = ['SOL',  'EOL', 'CRE','incineration_pulse']
+
+    #     for ind_pulse, pulse in enumerate(pulses):
+    #         Pulse_C[pulse][pulse_time[ind_pulse]] = Emissions_C[pulse]
+    #         Pulse_M[pulse][pulse_time[ind_pulse]] = Emissions_M[pulse]
+    #         Pulse_N[pulse][pulse_time[ind_pulse]] = Emissions_N[pulse]
 
 
-    #
 
-    if Dynamic:
-
-        pulse_time = [np.where(t_TOD==0),len(t_TOD[t_TOD<Life])-1,len(t_TOD[t_TOD<Life])-1,len(t_TOD[t_TOD<Life])-1]
-        pulse = ['SOL',  'EOL', 'CRE','incineration_pulse']
-
-        for ind_pulse in range(0,len(pulse)):
-            Pulse_C[pulse[ind_pulse]][pulse_time[ind_pulse]] = Emissions_C[pulse[ind_pulse]]
-            Pulse_M[pulse[ind_pulse]][pulse_time[ind_pulse]] = Emissions_M[pulse[ind_pulse]]
-            Pulse_N[pulse[ind_pulse]][pulse_time[ind_pulse]] = Emissions_N[pulse[ind_pulse]]
-
-    else:
-        for pulse in ['SOL', 'EOL', 'CRE','incineration_pulse']:
-            Pulse_C[pulse][t_TOD==0] = Emissions_C[pulse]
-            Pulse_M[pulse][t_TOD==0] = Emissions_M[pulse]
-            Pulse_N[pulse][t_TOD==0] = Emissions_N[pulse]
+    # else:
+    #     for pulse in ['SOL', 'EOL', 'CRE','incineration_pulse']:
+    #         Pulse_C[pulse][t_TOD==0] = Emissions_C[pulse]
+    #         Pulse_M[pulse][t_TOD==0] = Emissions_M[pulse]
+    #         Pulse_N[pulse][t_TOD==0] = Emissions_N[pulse]
 
 
 
@@ -606,8 +543,8 @@ for building_type in building_types[3]:#[25:35]:#[25:38]:
     
     # =========== Plotting Carbon decay ===========
     if ind_plot:
-        plot_carbon_decay(f_C,f_C_Carb_notdivided,f_C_G_notdivided,f_C_G_credit_notdivided,t_TOD)
-        # plot_methane_decay(f_M,t_TOD)    
+        pf.plot_carbon_decay(f_C,f_C_Carb_notdivided,f_C_G_notdivided,f_C_G_credit_notdivided,t_TOD)
+        # pf.plot_methane_decay(f_M,t_TOD)    
 
 
 if ind_GWP:
