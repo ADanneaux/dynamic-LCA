@@ -3,20 +3,26 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import os
+
 plt.style.use('seaborn-white')
-matplotlib.rcParams['font.family'] = 'Times New Roman'
-
-
+matplotlib.rcParams['font.family'] = 'arial'
 matplotlib.rcParams["legend.frameon"] = True
 matplotlib.rcParams["legend.fancybox"] = False
-matplotlib.rcParams['axes.unicode_minus'] = True
+matplotlib.rcParams['axes.unicode_minus'] = False
+hfont = {'fontname':'Futura Bk BT'}
 from matplotlib import ticker
 formatter = ticker.ScalarFormatter(useMathText=True)
 formatter.set_scientific(True) 
-formatter.set_powerlimits((-10,10))
+formatter.set_powerlimits((-1,1))
+
+
 import seaborn as sns
 import pandas as pd
 
+#%%
+output_path = os.path.join('..','output')
+figures_path = os.path.join('..','figures')
 
 #%%     Stacked bars function
 def get_cumulated_array(data, **kwargs):
@@ -27,7 +33,7 @@ def get_cumulated_array(data, **kwargs):
     return d
 #%%
 
-Data = pd.read_csv('Output\GWP_Results.csv',header=0,index_col=0)
+Data = pd.read_csv(os.path.join(output_path,'GWP_Results.csv'),header=0,index_col=0)
 
 #%%
 buildings = ['BAU_1','BAU_2','BAU_3','ASP_1','ASP_2','ASP_3','T_1','T_2','T_3','T_4','T_5','T_6','T_7']
@@ -58,7 +64,7 @@ for ind_THI in range(2):
 
             data = []
             for var in Variables:
-                data.append(Data[scenario][var])
+                data.append(Data.loc[scenario,var])
             
             data = np.array(data)*1e-6
             data_shape = np.shape(data)
@@ -83,9 +89,9 @@ for ind_THI in range(2):
                 ])
 
             ax.errorbar(xs[ind_building]+[-0.15,0.15][ind_dynamic],
-                        Data[scenario]['Net']*1e-6,
+                        Data.loc[scenario,'Net']*1e-6,
                         # yerr=[[1e6],[1e6]],
-                        yerr=[[Data[scenario]['Low_Error']*1e-6],[Data[scenario]['High_Error']*1e-6]],
+                        yerr=[[Data.loc[scenario,'Low_Error']*1e-6],[Data.loc[scenario,'High_Error']*1e-6]],
                         ecolor='k',
                         capsize=3,
                         capthick=0.52,
@@ -94,7 +100,7 @@ for ind_THI in range(2):
             if (ind_THI == 1 and ind_building==len(buildings)-1):
                 ax.annotate(
                     ['Dynamic','Static'][ind_dynamic],
-                    xy=(xs[ind_building]+[-0.15,0.15][ind_dynamic], Data[scenario]['Net']*1e-6), xycoords='data',
+                    xy=(xs[ind_building]+[-0.15,0.15][ind_dynamic], Data.loc[scenario,'Net']*1e-6), xycoords='data',
                     xytext=([-60,-53][ind_dynamic], 10), textcoords='offset points',
                     horizontalalignment='left',
                     arrowprops=dict(arrowstyle="->",
@@ -120,5 +126,5 @@ fig.legend(handles=handles,
             frameon=False,
             fontsize = 9)
 
-fig.savefig('Output\Figures\GWP.png',dpi=300,bbox_inches='tight')
+fig.savefig(os.path.join(figures_path,'GWP.png'),dpi=300,bbox_inches='tight')
 # %%

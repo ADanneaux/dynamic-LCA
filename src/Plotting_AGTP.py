@@ -3,18 +3,21 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import os
+
+
 plt.style.use('seaborn-white')
-matplotlib.rcParams['font.family'] = 'Times New Roman'
-
-
+matplotlib.rcParams['font.family'] = 'arial'
 matplotlib.rcParams["legend.frameon"] = True
 matplotlib.rcParams["legend.fancybox"] = False
-matplotlib.rcParams['axes.unicode_minus'] = True
+matplotlib.rcParams['axes.unicode_minus'] = False
 hfont = {'fontname':'Futura Bk BT'}
 from matplotlib import ticker
 formatter = ticker.ScalarFormatter(useMathText=True)
 formatter.set_scientific(True) 
-formatter.set_powerlimits((-10,10))
+formatter.set_powerlimits((-1,1))
+
+
 import seaborn as sns
 import pandas as pd
 
@@ -27,8 +30,9 @@ def get_cumulated_array(data, **kwargs):
     d[1:] = cum[:-1]
     return d
 #%%
-
-Data = pd.read_csv('output\AGTP_results.csv',header=0,index_col=0)
+output_path = os.path.join('..','output')
+figures_path = os.path.join('..','figures')
+Data = pd.read_csv(os.path.join(output_path,'AGTP_results.csv'),header=0,index_col=0)
 
 #%%
 Colors =pd.DataFrame({'BAU':sns.color_palette("muted", 9)[3],
@@ -62,5 +66,5 @@ ax.set_xlim([-5,327])
 ax.set_ylabel('[1e-7 K]')
 ax.set_title('AGTP')
 
-fig.savefig('Output\Figures\AGTP.png',dpi=300,bbox_inches='tight')
+fig.savefig(os.path.join(figures_path,'AGTP.png'),dpi=300,bbox_inches='tight')
 # %%

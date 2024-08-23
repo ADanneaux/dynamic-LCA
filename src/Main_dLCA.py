@@ -33,9 +33,9 @@ date = str(date.year)+str(date.month)+str(date.day)
 
 #%% Analysis type
 
-ind_GWP = False
+ind_GWP = True
 ind_AGTP = not ind_GWP #Set so code does not calculate GWP and AGTP at the same time which would take a long time
-ind_plot = True
+ind_plot = False
 
 
 #%%Importing Data
@@ -72,10 +72,6 @@ Fd_EOL3_LC3 = [Fd_Lan_LC3[x]*0.213+Fd_EOL_LC3[x]*0.787 for x in range(0,len(Fd_R
 
 #%% Scenario dependent Parameters
 # =========== Amount of raw pine ===========
-
-
-
-
 Cemtype =[0         ,0          ,0          ,1          ,1          ,1]
 LFD     =[Fd_EOL    ,Fd_Lan     ,Fd_EOL3    ,Fd_EOL_LC3 ,Fd_Lan_LC3 ,Fd_EOL3_LC3 ]
 #EOLcarbonation = [0,0.25,0.4,0.5,1,5,10,25,50,100]
@@ -154,6 +150,7 @@ Empty_pulse = 0*t_TOD
 
 SSPn = ['1-19','2-45','4-85']
 name_array = []
+
 #%% =========== Function to plot carbon decays ===========
 def plot_after_zeros(x, y, col, ax, style):
     x = np.array(x)
@@ -186,9 +183,7 @@ def plot_carbon_decay(f_C,f_C_Carb_notdivided,f_C_G_notdivided,f_C_G_credit_notd
     ax.axhline(0, color='black')
     return fix, ax
 
-def plot_methane_decay(f_M,t_TOD):#,f_C_Carb_notdivided,f_C_G_notdivided,f_C_G_credit_notdivided,t_TOD):
-    # f_neg = f_C_G_notdivided[:len(t_TOD)]+f_C_Carb_notdivided[:len(t_TOD)]+f_C['incineration_pulse'][:len(t_TOD)]
-    
+def plot_methane_decay(f_M,t_TOD):
     # Plotting decay
     fix, ax = plt.subplots(1,1,figsize=(6,4))
 
@@ -199,9 +194,7 @@ def plot_methane_decay(f_M,t_TOD):#,f_C_Carb_notdivided,f_C_G_notdivided,f_C_G_c
     Ebe_line = plot_after_zeros(t_TOD, 1e-3*f_M['EOL_bio_emissions_notdivided'][:len(t_TOD)], 'green', ax, '-')
     Ebc_line = plot_after_zeros(t_TOD, 1e-3*f_M['EOL_bio_credit_notdivided'][:len(t_TOD)], 'green', ax, '--')
 
-    # sin_line = plot_after_zeros(t_TOD, 1e-3*f_neg[:len(t_TOD)], 'green', ax, '-')
-    # Gcr_line = plot_after_zeros(t_TOD, 1e-3*f_C_G_credit_notdivided[:len(t_TOD)], 'red', ax, '--')
-    
+
     #Net
     ax.plot(t_TOD, 1e-3*f_M['Net'][:len(t_TOD)],label='Net',color='gold')
 
@@ -230,7 +223,7 @@ building_types = list(LCI_data.columns)
 
 
 
-for building_type in building_types[25:35]:#[25:38]:
+for building_type in building_types[3]:#[25:35]:#[25:38]:
     print(building_type)
     Dynamic = bool(LCI_data[building_type]['Dynamic'])
     SSP = int(LCI_data[building_type]['SSP'])
@@ -645,12 +638,12 @@ if ind_GWP:
     Results=Results.merge(Errors, how='left', left_index=True, right_index=True)
     Results = Results.fillna(0)
 
-    Results.to_csv(os.path.join(output_path+'GWP_results.csv'))
+    Results.to_csv(os.path.join(output_path,'GWP_results.csv'))
 
 if ind_AGTP:
     AGTP_results['T']=t_TOD[t_TOD<300]
-    AGTP_results.to_csv(os.path.join(output_path+'AGTP_results.csv'))
+    AGTP_results.to_csv(os.path.join(output_path,'AGTP_results.csv'))
 #%%
 Results = np.array([building_types,GWP_C_net_array,GWP_M_array,GWP_N_array,GWP_L_carb_array,GWP_EOL_carb_array,GWP_MN_array,GWP_Net_array])
-np.savetxt(os.path.join(output_path+'Results.csv', Results, delimiter=',', fmt='%s'))
+np.savetxt(os.path.join(output_path,'Results.csv'), Results, delimiter=',', fmt='%s')
 # %%
