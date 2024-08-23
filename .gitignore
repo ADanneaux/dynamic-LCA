@@ -1,0 +1,26 @@
+*.ipynb
+*.csv
+**/.svn/
+
+# Ignoring figures
+*.jpg
+*.jpeg
+*.png
+*.svg
+
+
+# OS-specific files
+Thumbs.db               # Windows
+desktop.ini             # Windows
+__pycache__/            # Python bytecode
+*.py[cod]               # Python bytecode
+
+.ipynb_checkpoints/     # Jupyter Notebook checkpoints
+
+# Logs
+*.log                   # Log files
+
+*.tmp                   # Temp files
+
+# Ignore IDE/project files
+.vscode/                # VSCode settings
