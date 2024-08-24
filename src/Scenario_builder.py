@@ -83,15 +83,15 @@ def filling_scenario(Data,scenario,Dynamic,THI,SSP,TexposureEOL):
 
     if EOL in ['T7','C1','C2','C3']:
         # Assume 2018 treatment share of timber in concrete buildings
-        Data.loc['landdfill_Ashare',scenario]  = 0.48
-        Data.loc['landdfill_Bshare',scenario]  = 0.13
-        Data.loc['landdfill_Cshare',scenario]  = 0.12
+        Data.loc['landfill_Ashare',scenario]  = 0.48
+        Data.loc['landfill_Bshare',scenario]  = 0.13
+        Data.loc['landfill_Cshare',scenario]  = 0.12
         Data.loc['recycling_share',scenario]   = 0.09
         Data.loc['incineration_share',scenario]= 0.18
     else:
-        Data.loc['landdfill_Ashare',scenario]  = 1 if EOL=='T4' else 0 
-        Data.loc['landdfill_Bshare',scenario]  = 1 if EOL=='T5' else 0
-        Data.loc['landdfill_Cshare',scenario]  = 1 if EOL=='T6' else 0
+        Data.loc['landfill_Ashare',scenario]  = 1 if EOL=='T4' else 0 
+        Data.loc['landfill_Bshare',scenario]  = 1 if EOL=='T5' else 0
+        Data.loc['landfill_Cshare',scenario]  = 1 if EOL=='T6' else 0
         Data.loc['recycling_share',scenario]   = 1 if EOL in ['T2','T3']  else 0
         Data.loc['incineration_share',scenario]= 1 if EOL=='T1' else 0
 
@@ -99,7 +99,7 @@ def filling_scenario(Data,scenario,Dynamic,THI,SSP,TexposureEOL):
     return Data
 # %% Scenario_LCI
 Data = pd.DataFrame()
-for Dynamic, method in enumerate(['Dynamic','Static']):
+for Dynamic, method in enumerate(['Static','Dynamic']):
     for ind_SSP, SSP in enumerate(["_SSP1","","_SSP4"]):
         for THI in [100,200]:
             for ind_building, building in enumerate(building_types):
@@ -114,6 +114,7 @@ Data = pd.DataFrame()
 for ind_SSP, SSP in enumerate(["_SSP1","","_SSP4"]):
     for TexposureEOL in [0.25,5,10]:
         for ind_building, building in enumerate(building_types):
+            Dynamic = 1
             THI = 300
             scenario = building+'_'+str(TexposureEOL)+SSP
             print(scenario)

@@ -38,7 +38,7 @@ date = str(date.year)+str(date.month)+str(date.day)
 
 #%% Analysis type
 
-ind_GWP = True
+ind_GWP = False
 ind_AGTP = not ind_GWP #Set so code does not calculate GWP and AGTP at the same time which would take a long time
 ind_plot = False
 
@@ -132,9 +132,9 @@ building_types = list(LCI_data.columns)
 
 
 
-for building_type in building_types[3:4]:
+for building_type in building_types:
     print(building_type)
-    Dynamic = bool(LCI_data[building_type]['Dynamic'])
+    Dynamic = bool(LCI_data.loc['Dynamic',building_type])
     SSP = int(LCI_data[building_type]['SSP'])
     THI = float(LCI_data[building_type]['THI'])
     
@@ -160,9 +160,9 @@ for building_type in building_types[3:4]:
     Cemtype= int(LCI_data[building_type]['Cemtype'])           #[-]
     LFD_index= int(LCI_data[building_type]['LFD_index'] )      #[-]
 
-    landfill_Ashare = float(LCI_data[building_type]['landfill_Ashare'])         #[-]
-    landfill_Bshare = float(LCI_data[building_type]['landfill_Bshare'])         #[-]
-    landfill_Cshare = float(LCI_data[building_type]['landfill_Cshare'])         #[-]
+    landfill_Ashare = float(LCI_data.loc['landfill_Ashare',building_type])         #[-]
+    landfill_Bshare = float(LCI_data.loc['landfill_Bshare',building_type])         #[-]
+    landfill_Cshare = float(LCI_data.loc['landfill_Cshare',building_type])         #[-]
 
     recycling_share = float(LCI_data[building_type]['recycling_share'] )        #[-]
 
@@ -450,7 +450,7 @@ for building_type in building_types[3:4]:
             GWP_M += np.sum(f_M[pulse])*rf_CH4/rf_CO2/denom0
             GWP_N += np.sum(f_N[pulse])*rf_N2O/rf_CO2/denom0
 
-        f_C['Net'] += f_C_Carb_notdivided[:len(t_TOD)] + f_C_G_notdivided[:len(t_TOD)] + f_C_G_credit_notdivided[:len(t_TOD)]
+        f_C['Net'] += f_C_Carb_L[:len(t_TOD)] + f_C_Carb_EOL[:len(t_TOD)] + f_C_G_notdivided[:len(t_TOD)] + f_C_G_credit_notdivided[:len(t_TOD)]
 
         GWP = GWP_Carb_L + GWP_Carb_EOL + GWP_C + GWP_M +  GWP_N + GWP_G
 
