@@ -20,8 +20,9 @@ from scipy import signal
 import os
 
 # Importing modules
-import core_plotting_functions as pf
-import core_utilities as cu
+import core_modules.core_plotting_functions as pf
+import core_modules.core_utilities as cu
+import core_modules.core_climate as cc
 
 # Formatting
 matplotlib.rcParams['font.family'] = 'arial'
@@ -79,21 +80,15 @@ Fd_EOL3_LC3 = [Fd_Lan_LC3[x]*0.213+Fd_EOL_LC3[x]*0.787 for x in range(0,len(Fd_R
 # =========== Amount of raw pine ===========
 Cemtype =[0         ,0          ,0          ,1          ,1          ,1]
 LFD     =[Fd_EOL    ,Fd_Lan     ,Fd_EOL3    ,Fd_EOL_LC3 ,Fd_Lan_LC3 ,Fd_EOL3_LC3 ]
-#EOLcarbonation = [0,0.25,0.4,0.5,1,5,10,25,50,100]
-EOLcarbonation = [0.25]
 
-#TimeHorizon = [20,100,200,300]
-TimeHorizon = [20]#,100,200]
 
 #%%Constant parameters
 MCar2  = [130.6/0.8,71.82088/0.8]
 ConcreteVolume = 1169.456 #[m3]
-demolA = 220             #[-]  - factor by which the exposed area is increased at demolition
 kSCM = [1,1.7]
 
 
 TOD = 500           #[years]
-
 r = 100            #[years]
 s = 100            #[years]
 Life = 100         #[years]
@@ -102,54 +97,12 @@ n = TOD*200+1
 t_TOD = np.linspace(0,TOD,n) 
 dt = t_TOD[1]-t_TOD[0]
 
-# =========== Atmospheric decay of CO2 ===========
-m_atmosphere= 5.1352e18  #[g/mol]
-M_air= 28.97             #[g/mol]
-# CO2 Parameters)
-alpha_CO2 = 1
-A0 = 0.217
-A1 = 0.259
-A2 = 0.337
-A3 = 0.186
-tau1 = 172.9     #[year]
-tau2 = 18.51     #[year]
-tau3 = 1.186     #[year]
-RE_CO2=  1.37e-5 #[W/m2/ppbv]
-M_CO2= 44        #[g/mol]
-af_CO2= 1
-
-rf_CO2= RE_CO2* af_CO2*(M_air/M_CO2)*1e9/m_atmosphere #[W/m2/kg] 
-# CH4 Parameters)
-alpha_CH4 = 1
-tau_CH4   = 12.4     #[year]
-RE_CH4= 3.63e-4      #[W/m2/ppbv]
-M_CH4= 16            #[g/mol]
-af_CH4= 1.62
-rf_CH4= RE_CH4* af_CH4*(M_air/M_CH4)*1e9/m_atmosphere #[W/m2/kg] 
-
-
-
-# N2O Parameters)
-alpha_N2O = 1
-tau_N2O   = 121     #[year] 
-RE_N2O= 3e-3        #[W/m2/ppbv]
-M_N2O= 44           #[g/mol]
-af_N2O= 1.05
-rf_N2O= RE_N2O* af_N2O*(M_air/M_N2O)*1e9/m_atmosphere #[W/m2/kg] 
-
-
-#%% =========== Global Temperature Change Potential ===========
-#Parameters)
-c1 = 0.631   #[K(Wm-2)-1]
-c2 = 0.429   #[K(Wm-2)-1]
-d1 = 8.4     #[year]
-d2 = 409.5   #[year]
-
-Rt = (c1/d1)*np.exp(-t_TOD/d1)+(c2/d2)*np.exp(-t_TOD/d2)
+rf_CO2, rf_CH4, rf_N2O=cc.define_rf()
+Rt = cc.define_rt(t_TOD)
 
 
 #%% =========== Convolution functions ===========
-yCO2_TOD = [A0+A1*np.exp2(-(x)/tau1)+A2*np.exp2(-(x)/tau2)+A3*np.exp2(-(x)/tau3) for x in t_TOD]
+yCO2_TOD = cc.decay_function('CO2',t_TOD)
 
 Empty_pulse = 0*t_TOD
 
@@ -180,7 +133,7 @@ building_types = list(LCI_data.columns)
 
 
 
-for building_type in building_types[3:4]:#[25:35]:#[25:38]:
+for building_type in building_types[3:4]:
     print(building_type)
     Dynamic = bool(LCI_data[building_type]['Dynamic'])
     SSP = int(LCI_data[building_type]['SSP'])
@@ -250,9 +203,9 @@ for building_type in building_types[3:4]:#[25:35]:#[25:38]:
     denom    = denom[t_TOD>=THI]
 
 
-    yCO2 = [A0+A1*np.exp2(-(x)/tau1)+A2*np.exp2(-(x)/tau2)+A3*np.exp2(-(x)/tau3) for x in t]
-    yCH4 = [np.exp(-(x)/tau_CH4) for x in t]
-    yN2O = [np.exp(-(x)/tau_N2O) for x in t]
+    yCO2 = cc.decay_function('CO2',t)
+    yCH4 = cc.decay_function('CH4',t)
+    yN2O = cc.decay_function('N2O',t)
 
 
     
@@ -262,36 +215,12 @@ for building_type in building_types[3:4]:#[25:35]:#[25:38]:
     Emissions_N = cu.set_emissions(Data_N)
     Emissions_C['incineration_pulse'] = Data_C['Biopulse'] * incineration_share
 
+    # Place emissions in the pulse dictionnaries
+    Pulse_C = cu.place_emissions_in_pulse(Emissions_C, t_TOD, Life, Dynamic)
+    Pulse_M = cu.place_emissions_in_pulse(Emissions_M, t_TOD, Life, Dynamic)
+    Pulse_N = cu.place_emissions_in_pulse(Emissions_N, t_TOD, Life, Dynamic)
+
     
-    # Initiate pulse dictionnaries
-    Pulse_C = cu.initiate_pulse_dictionnaries(len(t_TOD))
-    Pulse_M = cu.initiate_pulse_dictionnaries(len(t_TOD))
-    Pulse_N = cu.initiate_pulse_dictionnaries(len(t_TOD))
-
-    # Place emissions in 
-    Pulse_C = cu.place_emissions_in_pulse(Pulse_C, Emissions_C, t_TOD, Life, Dynamic)
-    # if Dynamic:
-
-        
-    #     pulse_time = [np.where(t_TOD==0),len(t_TOD[t_TOD<Life])-1,len(t_TOD[t_TOD<Life])-1,len(t_TOD[t_TOD<Life])-1]
-    #     pulses = ['SOL',  'EOL', 'CRE','incineration_pulse']
-
-    #     for ind_pulse, pulse in enumerate(pulses):
-    #         Pulse_C[pulse][pulse_time[ind_pulse]] = Emissions_C[pulse]
-    #         Pulse_M[pulse][pulse_time[ind_pulse]] = Emissions_M[pulse]
-    #         Pulse_N[pulse][pulse_time[ind_pulse]] = Emissions_N[pulse]
-
-
-
-    # else:
-    #     for pulse in ['SOL', 'EOL', 'CRE','incineration_pulse']:
-    #         Pulse_C[pulse][t_TOD==0] = Emissions_C[pulse]
-    #         Pulse_M[pulse][t_TOD==0] = Emissions_M[pulse]
-    #         Pulse_N[pulse][t_TOD==0] = Emissions_N[pulse]
-
-
-
-
 
     # =========== Carbonation ===========
     M = (Area_in*k_in+Area_out*k_out)*np.sqrt(t_TOD)*MCar
@@ -436,12 +365,18 @@ for building_type in building_types[3:4]:#[25:35]:#[25:38]:
             GWP_C += np.sum(f_C[pulse])/denomz[pulse]
             GWP_M += np.sum(f_M[pulse])*rf_CH4/rf_CO2/denomz[pulse]
             GWP_N += np.sum(f_N[pulse])*rf_N2O/rf_CO2/denomz[pulse]
+            
+            m_component= np.sum(f_M[pulse])*rf_CH4/rf_CO2/denomz[pulse]
+            print(f'{pulse}  :  {m_component}')
         
         
         for pulse in ['EOL_bio_emissions','EOL_bio_credit']:
             GWP_C += np.sum(f_C[pulse])
-            GWP_M += np.sum(f_M[pulse])*rf_CH4
+            GWP_M += np.sum(f_M[pulse])*rf_CH4/rf_CO2 
             GWP_N += np.sum(f_N[pulse])*rf_N2O/rf_CO2
+            
+            m_component= np.sum(f_M[pulse])*rf_CH4/rf_CO2
+            print(f'{pulse}  :  {m_component}')
 
         
         GWP = GWP_Carb_L + GWP_Carb_EOL + GWP_C + GWP_M +  GWP_N  + GWP_G 
@@ -546,7 +481,7 @@ for building_type in building_types[3:4]:#[25:35]:#[25:38]:
         pf.plot_carbon_decay(f_C,f_C_Carb_notdivided,f_C_G_notdivided,f_C_G_credit_notdivided,t_TOD)
         # pf.plot_methane_decay(f_M,t_TOD)    
 
-
+#%%
 if ind_GWP:
     Results = pd.DataFrame({'CO2_net':GWP_C_net_array,
                             'CH4':GWP_M_array,

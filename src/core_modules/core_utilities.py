@@ -39,15 +39,19 @@ def initiate_pulse_dictionnaries(time_length):
 
 #================================================================================================================================
 
-def place_emissions_in_pulse(Pulse, Emissions, t_TOD, Life, Dynamic):
+def place_emissions_in_pulse(Emissions, t_TOD, Life, Dynamic):
     """
     """
+    # Initiate the pulse
+    Pulse = initiate_pulse_dictionnaries(len(t_TOD))
+    # Get the pulse time depending on if it's a dynamic analysis
     if Dynamic:
         pulse_time = [np.where(t_TOD==0),len(t_TOD[t_TOD<Life])-1,len(t_TOD[t_TOD<Life])-1,len(t_TOD[t_TOD<Life])-1]
     else:
         pulse_time = [np.where(t_TOD==0)]*4
     pulses = ['SOL',  'EOL', 'CRE','incineration_pulse']
 
+    #Placing the emission as a pulse at the correct time
     for ind_pulse, pulse in enumerate(pulses):
         Pulse[pulse][pulse_time[ind_pulse]] = Emissions[pulse]
 
