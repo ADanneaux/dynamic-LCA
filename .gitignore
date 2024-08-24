@@ -8,9 +8,8 @@
 *.png
 *.svg
 
-
 # OS-specific files
-Thumbs.db               # Windows
+Thumbs.db               
 desktop.ini             
 **/__pycache__/         
 *.py[cod]               
