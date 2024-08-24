@@ -29,7 +29,6 @@ matplotlib.rcParams['font.family'] = 'arial'
 matplotlib.rcParams["legend.frameon"] = True
 matplotlib.rcParams["legend.fancybox"] = False
 matplotlib.rcParams['axes.unicode_minus'] = False
-hfont = {'fontname':'Futura Bk BT'}
 from matplotlib import ticker
 formatter = ticker.ScalarFormatter(useMathText=True)
 formatter.set_scientific(True) 
@@ -366,17 +365,12 @@ for building_type in building_types[3:4]:
             GWP_M += np.sum(f_M[pulse])*rf_CH4/rf_CO2/denomz[pulse]
             GWP_N += np.sum(f_N[pulse])*rf_N2O/rf_CO2/denomz[pulse]
             
-            m_component= np.sum(f_M[pulse])*rf_CH4/rf_CO2/denomz[pulse]
-            print(f'{pulse}  :  {m_component}')
-        
         
         for pulse in ['EOL_bio_emissions','EOL_bio_credit']:
             GWP_C += np.sum(f_C[pulse])
             GWP_M += np.sum(f_M[pulse])*rf_CH4/rf_CO2 
             GWP_N += np.sum(f_N[pulse])*rf_N2O/rf_CO2
             
-            m_component= np.sum(f_M[pulse])*rf_CH4/rf_CO2
-            print(f'{pulse}  :  {m_component}')
 
         
         GWP = GWP_Carb_L + GWP_Carb_EOL + GWP_C + GWP_M +  GWP_N  + GWP_G 

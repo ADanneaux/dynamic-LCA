@@ -1,5 +1,9 @@
 *.ipynb
 *.csv
+
+# Keeping raw_data csv
+!raw_data/*.csv
+
 **/.svn/
 
 # Ignoring figures

@@ -11,7 +11,6 @@ matplotlib.rcParams['font.family'] = 'arial'
 matplotlib.rcParams["legend.frameon"] = True
 matplotlib.rcParams["legend.fancybox"] = False
 matplotlib.rcParams['axes.unicode_minus'] = False
-hfont = {'fontname':'Futura Bk BT'}
 from matplotlib import ticker
 formatter = ticker.ScalarFormatter(useMathText=True)
 formatter.set_scientific(True) 
