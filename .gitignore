@@ -11,16 +11,12 @@
 
 # OS-specific files
 Thumbs.db               # Windows
-desktop.ini             # Windows
-**/__pycache__/            # Python bytecode
-*.py[cod]               # Python bytecode
-
-.ipynb_checkpoints/     # Jupyter Notebook checkpoints
-
+desktop.ini             
+**/__pycache__/         
+*.py[cod]               
+.ipynb_checkpoints/     
 # Logs
-*.log                   # Log files
-
-*.tmp                   # Temp files
-
+*.log                   
+*.tmp                   
 # Ignore IDE/project files
-.vscode/                # VSCode settings
+.vscode/                
