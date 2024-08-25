@@ -462,10 +462,12 @@ for building_type in building_types:
 
     if ind_GWP:
         GWP_C_net_array.append(GWP_C+ GWP_G + GWP_Carb_L + GWP_Carb_EOL)
-        GWP_M_array.append(GWP_M)
-        GWP_N_array.append(GWP_N)
+        GWP_C_nonbiogenic_array.append(GWP_C)
+        GWP_C_biogenic_array.append(GWP_G)
         GWP_L_carb_array.append(GWP_Carb_L)
         GWP_EOL_carb_array.append(GWP_Carb_EOL)
+        GWP_M_array.append(GWP_M)
+        GWP_N_array.append(GWP_N)
         GWP_MN_array.append(GWP_M +  GWP_N)
         GWP_Net_array.append(GWP)
 
