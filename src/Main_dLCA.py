@@ -476,12 +476,19 @@ for building_type in building_types:
         # pf.plot_methane_decay(f_M,t_TOD)    
 
 #%%
+
+directory = "..\output"
+if not os.path.exists(directory):
+    os.makedirs(directory) 
+
 if ind_GWP:
     Results = pd.DataFrame({'CO2_net':GWP_C_net_array,
+                            'CO2_nonbio':GWP_C_nonbiogenic_array,
+                            'CO2_bio':GWP_C_biogenic_array,
+                            'Life_carbonation':GWP_L_carb_array,
+                            'EOL_carbonation':GWP_EOL_carb_array,                          
                             'CH4':GWP_M_array,
                             'N2O':GWP_N_array,
-                            'Life_carbonation':GWP_L_carb_array,
-                            'EOL_carbonation':GWP_EOL_carb_array,
                             'MN':GWP_MN_array,
                             'Net':GWP_Net_array},
                             index=building_types)
@@ -489,7 +496,7 @@ if ind_GWP:
     Low_Error = []
     High_Error = []
 
-    Cbuildings = np.array([[[[x+'_'+v+'_'+y+'_'+z for x in ['BAU','ASP'] for y in ['Dynamic','Static']] for z in ['100','200']]] for v in ['1','2','3']]).flatten()
+    Cbuildings = np.array([[[[x+'_'+v+'_'+y+'_'+z for x in ['BAU','LC3'] for y in ['Dynamic','Static']] for z in ['100','200']]] for v in ['C1','C2','C3']]).flatten()
 
     for building_type in Cbuildings:
         SSP1 =building_type+'_SSP1'
