@@ -117,6 +117,8 @@ import importlib
 importlib.reload(cu)
 
 GWP_C_net_array = []
+GWP_C_nonbiogenic_array = []
+GWP_C_biogenic_array = []
 GWP_M_array = []
 GWP_N_array = []
 GWP_L_carb_array = []
