@@ -24,6 +24,8 @@ import core_modules.core_plotting_functions as pf
 import core_modules.core_utilities as cu
 import core_modules.core_climate as cc
 
+from decay_plot import plot_carbon_decay, plot_methane_decay
+
 # Formatting
 matplotlib.rcParams['font.family'] = 'arial'
 matplotlib.rcParams["legend.frameon"] = True
@@ -476,8 +478,8 @@ for building_type in building_types:
     
     # =========== Plotting Carbon decay ===========
     if ind_plot:
-        pf.plot_carbon_decay(f_C,f_C_Carb_notdivided,f_C_G_notdivided,f_C_G_credit_notdivided,t_TOD)
-        # pf.plot_methane_decay(f_M,t_TOD)    
+        plot_carbon_decay(building_type,f_C,f_C_Carb_notdivided,f_C_G_notdivided,f_C_G_credit_notdivided,t_TOD)
+        plot_methane_decay(building_type,f_M,t_TOD)    
 
 #%%
 
@@ -500,17 +502,19 @@ if ind_GWP:
     Low_Error = []
     High_Error = []
 
-    Cbuildings = np.array([[[[x+'_'+v+'_'+y+'_'+z for x in ['BAU','LC3'] for y in ['Dynamic','Static']] for z in ['100','200']]] for v in ['C1','C2','C3']]).flatten()
-
-    for building_type in Cbuildings:
+    RCbuildings = np.array([[[[x+'_'+v+'_'+y+'_'+z for x in ['BAU','LC3'] for y in ['Dynamic','Static']] for z in ['100','200']]] for v in ['C1','C2','C3']]).flatten()
+    ESTbuildings = np.array([[[[x+'_'+v+'_'+y+'_'+z for x in ['EST',] for y in ['Dynamic','Static']] for z in ['100','200']]] for v in ['T1','T2','T3', 'T4', 'T5', 'T6', 'T7']]).flatten()
+    Allbuildings = np.concatenate((RCbuildings, ESTbuildings))
+    
+    for building_type in Allbuildings:
         SSP1 =building_type+'_SSP1'
-        SSP4 =building_type+'_SSP4'
-        Low_Error.append(Results['Net'][building_type]-Results['Net'][SSP4])
+        SSP5 =building_type+'_SSP5'
+        Low_Error.append(Results['Net'][building_type]-Results['Net'][SSP5])
         High_Error.append(-Results['Net'][building_type]+Results['Net'][SSP1])
 
     Errors = pd.DataFrame({'Low_Error':Low_Error,
                             'High_Error':High_Error},
-                            index=Cbuildings)
+                            index=Allbuildings)
 
     Results=Results.merge(Errors, how='left', left_index=True, right_index=True)
     Results = Results.fillna(0)
