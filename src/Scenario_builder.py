@@ -100,7 +100,7 @@ def filling_scenario(Data,scenario,Dynamic,THI,SSP,TexposureEOL):
 # %% Scenario_LCI
 Data = pd.DataFrame()
 for Dynamic, method in enumerate(['Static','Dynamic']):
-    for ind_SSP, SSP in enumerate(["_SSP1","","_SSP4"]):
+    for ind_SSP, SSP in enumerate(["_SSP1","","_SSP5"]):
         for THI in [100,200]:
             for ind_building, building in enumerate(building_types):
                 scenario = building+'_'+method+'_'+str(THI)+SSP
@@ -111,7 +111,7 @@ for Dynamic, method in enumerate(['Static','Dynamic']):
 Data.to_csv(os.path.join(treated_data_path,'Scenario_LCI.csv'),index=True)
 # %% Input_AGTP
 Data = pd.DataFrame()
-for ind_SSP, SSP in enumerate(["_SSP1","","_SSP4"]):
+for ind_SSP, SSP in enumerate(["_SSP1","","_SSP5"]):
     for TexposureEOL in [0.25,5,10]:
         for ind_building, building in enumerate(building_types):
             Dynamic = 1
