@@ -335,18 +335,18 @@ def plot_methane_decay(building_type,f_M, t_TOD):
 
     fig.show()
 
-    directory = "Figures/html"
+    directory = "../figures/html"
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    directory = "Figures/img/decay"
+    directory = "../figures/img/decay"
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     # Save the figure as an html file
-    fig.write_html("Figures/html/CH4decay-"+building_type+".html")
+    fig.write_html("../figures/html/CH4decay-"+building_type+".html")
 
     # Save the figure as an html file
-    fig.write_image("Figures/img/decay/CH4decay-"+building_type+".jpg", scale=scale, engine='orca')
+    fig.write_image("../figures/img/decay/CH4decay-"+building_type+".jpg", scale=scale, engine='orca')
 
     return fig
