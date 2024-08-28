@@ -108,7 +108,7 @@ for Dynamic, method in enumerate(['Static','Dynamic']):
                 TexposureEOL = 0.25 # In all default scenarios, concrete is left exposed for 3 months after building demolition
                 Data = filling_scenario(Data,scenario,Dynamic,THI,ind_SSP,TexposureEOL)
 
-directory = "..\data"
+directory = treated_data_path
 if not os.path.exists(directory):
     os.makedirs(directory)
 
