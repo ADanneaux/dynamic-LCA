@@ -24,7 +24,7 @@ import core_modules.core_plotting_functions as pf
 import core_modules.core_utilities as cu
 import core_modules.core_climate as cc
 
-from decay_plot import plot_carbon_decay, plot_methane_decay
+from core_modules.decay_plot_functions import plot_carbon_decay, plot_methane_decay
 
 # Formatting
 matplotlib.rcParams['font.family'] = 'arial'
@@ -42,7 +42,7 @@ date = str(date.year)+str(date.month)+str(date.day)
 
 ind_GWP = False
 ind_AGTP = not ind_GWP #Set so code does not calculate GWP and AGTP at the same time which would take a long time
-ind_plot = False
+ind_plot = True
 
 
 #%%Importing Data
@@ -132,9 +132,6 @@ AGTP_results = pd.DataFrame()
 
 
 building_types = list(LCI_data.columns)
-
-
-
 
 for building_type in building_types:
     print(building_type)
@@ -483,7 +480,7 @@ for building_type in building_types:
 
 #%%
 
-directory = "..\output"
+directory = output_path
 if not os.path.exists(directory):
     os.makedirs(directory) 
 

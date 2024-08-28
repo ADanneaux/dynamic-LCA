@@ -108,6 +108,10 @@ for Dynamic, method in enumerate(['Static','Dynamic']):
                 TexposureEOL = 0.25 # In all default scenarios, concrete is left exposed for 3 months after building demolition
                 Data = filling_scenario(Data,scenario,Dynamic,THI,ind_SSP,TexposureEOL)
 
+directory = "..\data"
+if not os.path.exists(directory):
+    os.makedirs(directory)
+
 Data.to_csv(os.path.join(treated_data_path,'Scenario_LCI.csv'),index=True)
 # %% Input_AGTP
 Data = pd.DataFrame()
@@ -120,6 +124,5 @@ for ind_SSP, SSP in enumerate(["_SSP1","","_SSP5"]):
             print(scenario)
             Data = filling_scenario(Data,scenario,Dynamic,THI,ind_SSP,TexposureEOL)
 
-            
 Data.to_csv(os.path.join(treated_data_path,'Input_AGTP.csv'),index=True)
 # %%
