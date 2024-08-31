@@ -1,6 +1,9 @@
 *.ipynb
 *.csv
 
+# Ignoring source data
+*.xlsx
+
 # Keeping raw_data csv
 !raw_data/*.csv
 
