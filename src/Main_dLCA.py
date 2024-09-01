@@ -223,6 +223,8 @@ for building_type in building_types:
     
 
     # =========== Carbonation ===========
+
+    # Calculating total carbonation potentials
     M = (Area_in*k_in+Area_out*k_out)*np.sqrt(t_TOD)*MCar
     M[t_TOD>=Life]=M[t_TOD<Life][-1]
     ML= (Area_in*k_in+Area_out*k_out)*np.sqrt(Life)*MCar
@@ -236,8 +238,8 @@ for building_type in building_types:
     dMdtSSP = []
     dMdt_for_GWP = []
 
+    # Assessing effect of future CO2 concentration on carbonation
     K = [K119,K245,K485][SSP]
-
     for j in range(0,len(denom)):
         dMdt.append((M[j+1]-M[j]))
         dMdt_for_GWP.append(-dMdt[-1]/denom[j])
@@ -505,9 +507,17 @@ if ind_GWP:
     
     for building_type in Allbuildings:
         SSP1 =building_type+'_SSP1'
-        SSP5 =building_type+'_SSP5'
-        Low_Error.append(Results['Net'][building_type]-Results['Net'][SSP5])
-        High_Error.append(-Results['Net'][building_type]+Results['Net'][SSP1])
+        SSP5 =building_type+'_SSP4'
+
+        low_error = Results['Net'][building_type]-Results['Net'][SSP5]
+        high_error = -Results['Net'][building_type]+Results['Net'][SSP1]
+
+        # round to zero if negligible error 
+        low_error = 0 if abs(low_error)<0.05 else low_error
+        high_error = 0 if abs(high_error)<0.05 else high_error
+
+        Low_Error.append(low_error)
+        High_Error.append(high_error)
 
     Errors = pd.DataFrame({'Low_Error':Low_Error,
                             'High_Error':High_Error},

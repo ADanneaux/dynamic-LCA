@@ -35,7 +35,7 @@ def get_cumulated_array(data, **kwargs):
 Data = pd.read_csv(os.path.join(output_path,'GWP_Results.csv'),header=0,index_col=0)
 
 #%%
-buildings = ['BAU_1','BAU_2','BAU_3','ASP_1','ASP_2','ASP_3','T_1','T_2','T_3','T_4','T_5','T_6','T_7']
+buildings = ['BAU_C1','BAU_C2','BAU_C3','LC3_C1','LC3_C2','LC3_C3','EST_T1','EST_T2','EST_T3','EST_T4','EST_T5','EST_T6','EST_T7']
 
 
 xs = np.arange(len(buildings))
