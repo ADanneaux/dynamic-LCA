@@ -42,7 +42,7 @@ date = str(date.year)+str(date.month)+str(date.day)
 
 ind_GWP = False
 ind_AGTP = not ind_GWP #Set so code does not calculate GWP and AGTP at the same time which would take a long time
-ind_plot = True
+ind_plot = False
 
 
 #%%Importing Data
@@ -133,7 +133,7 @@ AGTP_results = pd.DataFrame()
 
 building_types = list(LCI_data.columns)
 
-for building_type in building_types:
+for building_type in building_types[1:2]:
     print(building_type)
     Dynamic = bool(LCI_data.loc['Dynamic',building_type])
     SSP = int(LCI_data[building_type]['SSP'])
@@ -236,13 +236,11 @@ for building_type in building_types:
     M[M>Mmax] = Mmax
     dMdt = []
     dMdtSSP = []
-    dMdt_for_GWP = []
 
     # Assessing effect of future CO2 concentration on carbonation
     K = [K119,K245,K485][SSP]
     for j in range(0,len(denom)):
         dMdt.append((M[j+1]-M[j]))
-        dMdt_for_GWP.append(-dMdt[-1]/denom[j])
         dMdtSSP.append(dMdt[j]*K[j])
 
     MSSP = [0]
@@ -274,17 +272,7 @@ for building_type in building_types:
     g_for_GWP = np.array(g[:len(denom)])/np.array(denom)
     g_credit_for_GWP  = np.array(g_credit[:len(denom)])/np.array(denom)
     # =========== Lanfill decay ===========
-
-    # Source: EPA (2021) US Inventory (1990-2019) of GHG emissions and sinks
-    tau_wood =29                                     #[years]
-    k= np.log(2)/tau_wood                            #[years-1]
-    # Source: IPCC (2006) Chapter 3 Annex
-
-
-
-    # EoL decay function
-    EoL_decay_f = np.array([0 if t_TOD[x] < s else dt * k * np.exp(-k * (t_TOD[x] - s)) for x in range(len(t_TOD))])
-
+    EoL_decay_f = cc.EOL_decay_functions(t_TOD,s,dt)
 
 
 
@@ -316,18 +304,9 @@ for building_type in building_types:
 
     # =========== Emission Decay ===========
 
-    f_C ={}
-    f_M ={}
-    f_N ={}
-
-    for pulse in ['SOL',  'EOL', 'CRE','incineration_pulse']:
-        f_C[pulse] = 	np.convolve(yCO2,Pulse_C[pulse])
-        f_M[pulse] = 	np.convolve(yCH4,Pulse_M[pulse])
-        f_N[pulse] = 	np.convolve(yN2O,Pulse_N[pulse])
-
-
-
-
+    f_C =cu.create_basic_convolution(yCO2,Pulse_C)
+    f_M =cu.create_basic_convolution(yCH4,Pulse_M)
+    f_N =cu.create_basic_convolution(yN2O,Pulse_N)
 
 
     if Dynamic:
@@ -344,49 +323,27 @@ for building_type in building_types:
         f_C_G_credit_notdivided = np.convolve(yCO2,g_credit)
 
         # =========== Convoluting EoL decay ===========
-        for pulse in['EOL_bio_emissions','EOL_bio_credit']:
-            f_C[pulse] = 	np.convolve(yCO2,np.array(Pulse_C[pulse][:len(denom)])/np.array(denom))
-            f_M[pulse] = 	np.convolve(yCH4,np.array(Pulse_M[pulse][:len(denom)])/np.array(denom))
-            f_N[pulse] = 	np.convolve(yN2O,np.array(Pulse_N[pulse][:len(denom)])/np.array(denom))
-
-            #Necessary to calculate AGTP
-            f_C[pulse+'_notdivided'] = 	np.convolve(yCO2,np.array(Pulse_C[pulse][:len(denom)]))
-            f_M[pulse+'_notdivided'] = 	np.convolve(yCH4,np.array(Pulse_M[pulse][:len(denom)]))
-            f_N[pulse+'_notdivided'] = 	np.convolve(yN2O,np.array(Pulse_N[pulse][:len(denom)]))
+        f_C = cu.EOL_bio_convolutions(f_C,yCO2,Pulse_C,denom)
+        f_M = cu.EOL_bio_convolutions(f_M,yCH4,Pulse_M,denom)
+        f_N = cu.EOL_bio_convolutions(f_N,yN2O,Pulse_N,denom)
+        
         
         # =========== GWP composition ===========
         GWP_Carb_L = np.sum(f_C_Carb_L)
         GWP_Carb_EOL = np.sum(f_C_Carb_EOL)
         GWP_G   = np.sum(f_C_G)+np.sum(f_C_G_credit)
-        GWP_C =0
-        GWP_M =0
-        GWP_N =0
-
-
-        for pulse in ['SOL',  'EOL', 'CRE','incineration_pulse']:
-            GWP_C += np.sum(f_C[pulse])/denomz[pulse]
-            GWP_M += np.sum(f_M[pulse])*rf_CH4/rf_CO2/denomz[pulse]
-            GWP_N += np.sum(f_N[pulse])*rf_N2O/rf_CO2/denomz[pulse]
-            
         
-        for pulse in ['EOL_bio_emissions','EOL_bio_credit']:
-            GWP_C += np.sum(f_C[pulse])
-            GWP_M += np.sum(f_M[pulse])*rf_CH4/rf_CO2 
-            GWP_N += np.sum(f_N[pulse])*rf_N2O/rf_CO2
-            
-
+        GWP_C = cc.add_dynamic_GWP(f_C,denomz,rf_CO2)
+        GWP_M = cc.add_dynamic_GWP(f_M,denomz,rf_CH4)
+        GWP_N = cc.add_dynamic_GWP(f_N,denomz,rf_N2O)
         
+        #Total GWP
         GWP = GWP_Carb_L + GWP_Carb_EOL + GWP_C + GWP_M +  GWP_N  + GWP_G 
 
+        f_C = cu.calculate_f_net(f_C,t_TOD)
+        f_M = cu.calculate_f_net(f_M,t_TOD)
+        f_N = cu.calculate_f_net(f_N,t_TOD)
 
-        f_C['Net'] = 0
-        f_M['Net'] = 0
-        f_N['Net'] = 0
-
-        for pulse in ['SOL',  'EOL', 'CRE','incineration_pulse', 'EOL_bio_emissions_notdivided','EOL_bio_credit_notdivided']:
-            f_C['Net'] += f_C[pulse][:len(t_TOD)]
-            f_M['Net'] += f_M[pulse][:len(t_TOD)]
-            f_N['Net'] += f_N[pulse][:len(t_TOD)]
         f_C['Net'] += f_C_Carb_notdivided[:len(t_TOD)] + f_C_G_notdivided[:len(t_TOD)] + f_C_G_credit_notdivided[:len(t_TOD)]
 
 

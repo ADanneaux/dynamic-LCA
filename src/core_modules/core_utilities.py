@@ -57,4 +57,27 @@ def place_emissions_in_pulse(Emissions, t_TOD, Life, Dynamic):
 
     return Pulse
 
+#================================================================================================================================
+def create_basic_convolution(y,Pulse) -> dict:
+        f = {}
+        for pulse in ['SOL',  'EOL', 'CRE','incineration_pulse']:
+            f[pulse] = 	np.convolve(y,Pulse[pulse])
+        return f
 
+
+
+# =========== Convoluting EoL decay ===========
+def EOL_bio_convolutions(f: dict,y,Pulse,denom)-> dict:
+    for pulse in['EOL_bio_emissions','EOL_bio_credit']:
+        f[pulse] = 	np.convolve(y,np.array(Pulse[pulse][:len(denom)])/np.array(denom))
+        #Necessary to calculate AGTP
+        f[pulse+'_notdivided'] = 	np.convolve(y,np.array(Pulse[pulse][:len(denom)]))
+
+    return f
+
+
+def calculate_f_net(f:dict,t_TOD) -> dict:
+    f['Net'] = 0
+    for pulse in ['SOL',  'EOL', 'CRE','incineration_pulse', 'EOL_bio_emissions_notdivided','EOL_bio_credit_notdivided']:
+        f['Net'] += f[pulse][:len(t_TOD)]
+    return f

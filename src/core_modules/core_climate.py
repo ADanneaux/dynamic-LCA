@@ -67,3 +67,31 @@ def decay_function(molecule: str,t) -> list:
         print("ERROR: unsupported molecule")
 
     return y
+
+
+#%% =========================================================================================================
+# =========================================================================================================
+# =========================================================================================================
+
+
+# =========== Lanfill decay ===========
+def EOL_decay_functions(t_TOD,s,dt):
+   # Source: EPA (2021) US Inventory (1990-2019) of GHG emissions and sinks
+    tau_wood =29                                     #[years]
+    k= np.log(2)/tau_wood                            #[years-1]
+    # Source: IPCC (2006) Chapter 3 Annex
+
+    # EoL decay function
+    EoL_decay_f = np.array([0 if t_TOD[x] < s else dt * k * np.exp(-k * (t_TOD[x] - s)) for x in range(len(t_TOD))])
+    
+    return EoL_decay_f
+
+
+def add_dynamic_GWP(f,denomz,rf):
+    rf_CO2,_,_ = define_rf()
+    GWP = 0           
+    for pulse in ['SOL',  'EOL', 'CRE','incineration_pulse']:
+        GWP += np.sum(f[pulse])*rf/rf_CO2/denomz[pulse]
+    for pulse in ['EOL_bio_emissions','EOL_bio_credit']:   
+        GWP += np.sum(f[pulse])*rf/rf_CO2
+    return GWP
