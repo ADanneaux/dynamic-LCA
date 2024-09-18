@@ -12,15 +12,12 @@ Authors:
 import datetime
 import numpy as np
 import matplotlib
-import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
 from scipy.stats import norm
-from scipy import signal
 import os
+from matplotlib import ticker
 
 # Importing modules
-import core_modules.core_plotting_functions as pf
 import core_modules.core_utilities as cu
 import core_modules.core_climate as cc
 
@@ -31,7 +28,6 @@ matplotlib.rcParams['font.family'] = 'arial'
 matplotlib.rcParams["legend.frameon"] = True
 matplotlib.rcParams["legend.fancybox"] = False
 matplotlib.rcParams['axes.unicode_minus'] = False
-from matplotlib import ticker
 formatter = ticker.ScalarFormatter(useMathText=True)
 formatter.set_scientific(True) 
 formatter.set_powerlimits((-1,1))
@@ -40,7 +36,7 @@ date = str(date.year)+str(date.month)+str(date.day)
 
 #%% Analysis type
 
-ind_GWP = False
+ind_GWP = True
 ind_AGTP = not ind_GWP #Set so code does not calculate GWP and AGTP at the same time which would take a long time
 ind_plot = False
 
@@ -115,8 +111,8 @@ name_array = []
 
 
 #%% Looping through buildings
-import importlib
-importlib.reload(cu)
+# import importlib
+# importlib.reload(cu)
 
 GWP_C_net_array = []
 GWP_C_nonbiogenic_array = []
@@ -351,8 +347,8 @@ for building_type in building_types[1:2]:
         # =========== Convoluting the carbonation sink===========
         P_C_carb_L = np.zeros(len(t_TOD))
         P_C_carb_EOL = np.zeros(len(t_TOD))
-        P_C_carb_L[t_TOD==0] = -MSSP[np.where(t_TOD==Life)]
-        P_C_carb_EOL[t_TOD==0] = -MSSP[-1]+MSSP[np.where(t_TOD==Life)]
+        P_C_carb_L[t_TOD==0] = -MSSP[np.where(t_TOD==Life-dt)]
+        P_C_carb_EOL[t_TOD==0] = -MSSP[-1]+MSSP[np.where(t_TOD==Life-dt)]
             
         f_C_Carb_L = 	np.convolve(yCO2,P_C_carb_L)
         f_C_Carb_EOL = 	np.convolve(yCO2,P_C_carb_EOL)
