@@ -40,8 +40,6 @@ def initiate_pulse_dictionnaries(time_length):
 #================================================================================================================================
 
 def place_emissions_in_pulse(Emissions, t_TOD, Life, Dynamic):
-    """
-    """
     # Initiate the pulse
     Pulse = initiate_pulse_dictionnaries(len(t_TOD))
     # Get the pulse time depending on if it's a dynamic analysis
@@ -59,6 +57,7 @@ def place_emissions_in_pulse(Emissions, t_TOD, Life, Dynamic):
 
 #================================================================================================================================
 def create_basic_convolution(y,Pulse) -> dict:
+        # Convolves emission pulse and gas decay function: gives remaining amount of the GHG in the atmosphere
         f = {}
         for pulse in ['SOL',  'EOL', 'CRE','incineration_pulse']:
             f[pulse] = 	np.convolve(y,Pulse[pulse])
@@ -68,6 +67,10 @@ def create_basic_convolution(y,Pulse) -> dict:
 
 # =========== Convoluting EoL decay ===========
 def EOL_bio_convolutions(f: dict,y,Pulse,denom)-> dict:
+    """
+    Convolution function for delayed continuous emissions
+    Returns the remaining share both divided by equivalent CO2 pulse and not 
+    """
     for pulse in['EOL_bio_emissions','EOL_bio_credit']:
         f[pulse] = 	np.convolve(y,np.array(Pulse[pulse][:len(denom)])/np.array(denom))
         #Necessary to calculate AGTP

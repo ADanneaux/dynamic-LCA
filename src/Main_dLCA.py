@@ -54,10 +54,10 @@ K370       = pd.read_csv(os.path.join(input_path,'K370.csv')).values
 K485       = pd.read_csv(os.path.join(input_path,'K485.csv')).values
 
 Fd_RCA     = pd.read_csv(os.path.join(input_path,'Fd_RCA.csv')).values
-Fd_Unb     = pd.read_csv(os.path.join(input_path,'Fd_unbound.csv')).values
+Fd_Unb     = pd.read_csv(os.path.join(input_path,'Fd_Unbound.csv')).values
 Fd_Lan     = [x[0] for x in pd.read_csv(os.path.join(input_path,'Fd_Landfill.csv')).values]
 Fd_RCA_LC3 = pd.read_csv(os.path.join(input_path,'Fd_RCA_LC3.csv')).values
-Fd_Unb_LC3 = pd.read_csv(os.path.join(input_path,'Fd_unbound_LC3.csv')).values
+Fd_Unb_LC3 = pd.read_csv(os.path.join(input_path,'Fd_Unbound_LC3.csv')).values
 Fd_Lan_LC3 = [x[0] for x in pd.read_csv(os.path.join(input_path,'Fd_Landfill_LC3.csv')).values]
 
 if ind_GWP:
