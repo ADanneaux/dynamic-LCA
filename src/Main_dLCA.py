@@ -37,7 +37,7 @@ date = str(date.year)+str(date.month)+str(date.day)
 
 ind_GWP = False
 ind_AGTP = not ind_GWP #Set so code does not calculate GWP and AGTP at the same time which would take a long time
-ind_plot = True
+ind_plot = False
 
 #%%Importing Data
 
@@ -50,9 +50,9 @@ K245       = pd.read_csv(os.path.join(input_path,'K245.csv')).values
 K370       = pd.read_csv(os.path.join(input_path,'K370.csv')).values
 K485       = pd.read_csv(os.path.join(input_path,'K485.csv')).values
 
-Fd_RCA     = pd.read_csv(os.path.join(input_path,'Fd_RCA.csv')).values
-Fd_Unb     = pd.read_csv(os.path.join(input_path,'Fd_Unbound.csv')).values
-Fd_Lan     = [x[0] for x in pd.read_csv(os.path.join(input_path,'Fd_Landfill.csv')).values]
+Fd_RCA     = pd.read_csv(os.path.join(input_path,'Fd_RCA_BAU.csv')).values
+Fd_Unb     = pd.read_csv(os.path.join(input_path,'Fd_Unbound_BAU.csv')).values
+Fd_Lan     = [x[0] for x in pd.read_csv(os.path.join(input_path,'Fd_Landfill_BAU.csv')).values]
 Fd_RCA_LC3 = pd.read_csv(os.path.join(input_path,'Fd_RCA_LC3.csv')).values
 Fd_Unb_LC3 = pd.read_csv(os.path.join(input_path,'Fd_Unbound_LC3.csv')).values
 Fd_Lan_LC3 = [x[0] for x in pd.read_csv(os.path.join(input_path,'Fd_Landfill_LC3.csv')).values]

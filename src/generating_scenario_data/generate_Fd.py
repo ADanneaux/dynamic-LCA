@@ -28,8 +28,8 @@ K = k_out*1e3
 
 S = {
     'RCA':[29.4, 13.8, 39.2, 17.6], #RCA
-    'Unbound':[15.7, 27.5, 39.2, 17.6],  #Landfill
-    'Landfill':[17.8, 27.1, 17.3, 37.8],
+    'Unbound':[15.7, 27.5, 39.2, 17.6],
+    'Landfill':[17.8, 27.1, 17.3, 37.8], #Landfill
 }
 
 A1 = {
@@ -62,7 +62,6 @@ def uncarbonated(Fd,a,b,Do):
         Fd.append(1)
     return Fd
 
-
 for ind_type, type in enumerate(['RCA','Unbound','Landfill']):
     for ind_cem, cem_type in enumerate(['BAU','LC3']): 
         s1=S[type][0]
@@ -82,15 +81,17 @@ for ind_type, type in enumerate(['RCA','Unbound','Landfill']):
             if t[j]<Life:
                 Do.append(0)
             else:
-                Do.append(2*K*kSCM[ind_cem]*np.sqrt(t[j]-Life))  
-            
-            Fd1 = uncarbonated(Fd1,a1,b1,Do)
-            Fd2 = uncarbonated(Fd2,b1,b2,Do)
-            Fd3 = uncarbonated(Fd3,b2,b3,Do)
-            Fd4 = uncarbonated(Fd4,b3,b4,Do)
-            Fd5 = uncarbonated(Fd5,b4,a1,Do)
+                Do.append(2*K*kSCM[ind_cem]*np.sqrt(t[j]-Life))
 
-            Fd.append(s1*Fd1[-1]+s2*Fd2[-1]+s3*Fd3[-1]+s4*Fd4[-1])
-        
-        np.savetxt('..\data\Fd_'+type+'_'+cem_type+'.csv',np.array(Fd),delimiter=',')
-        
+        Fd1 = uncarbonated(Fd1,a1,b1,Do)
+        Fd2 = uncarbonated(Fd2,b1,b2,Do)
+        Fd3 = uncarbonated(Fd3,b2,b3,Do)
+        Fd4 = uncarbonated(Fd4,b3,b4,Do)
+        Fd5 = uncarbonated(Fd5,b4,a1,Do)
+
+        Fd.append(s1*Fd1[-1]+s2*Fd2[-1]+s3*Fd3[-1]+s4*Fd4[-1])
+
+        np.savetxt('..\..\generated_data\Fd_'+type+'_'+cem_type+'.csv',np.array(Fd),delimiter=',')
+
+        print (len(t))
+        print(len(Fd))

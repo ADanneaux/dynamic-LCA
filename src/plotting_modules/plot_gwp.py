@@ -481,6 +481,7 @@ if not os.path.exists(directory):
 fig.write_html("../../output/figures/gwp/html/gwp20.html")
 
 # Save the figure as an HTML file
+fig.write_image("../../output/figures/gwp/img/gwp20.pdf", scale=scale, engine='orca')
 fig.write_image("../../output/figures/gwp/img/gwp20.jpg", scale=scale, engine='orca')
 
 
@@ -829,6 +830,7 @@ if not os.path.exists(directory):
 fig.write_html("../../output/figures/gwp/html/gwp100.html")
 
 # Save the figure as an HTML file
+fig.write_image("../../output/figures/gwp/img/gwp100.pdf", scale=scale, engine='orca')
 fig.write_image("../../output/figures/gwp/img/gwp100.jpg", scale=scale, engine='orca')
 
 
