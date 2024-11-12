@@ -420,16 +420,17 @@ if ind_GWP:
     Low_Error = []
     High_Error = []
 
-    RCbuildings = np.array([[[[x+'_'+v+'_'+y+'_'+z for x in ['BAU','LC3'] for y in ['Dynamic','Static']] for z in ['100','200']]] for v in ['C1','C2','C3']]).flatten()
-    ESTbuildings = np.array([[[[x+'_'+v+'_'+y+'_'+z for x in ['EST',] for y in ['Dynamic','Static']] for z in ['100','200']]] for v in ['T1','T2','T3', 'T4', 'T5', 'T6', 'T7']]).flatten()
+    RCbuildings = np.array([[[[x+'_'+v+'_'+y+'_'+z for x in ['BAU','LC3'] for y in ['Dynamic','Static']] for z in ['20','100','200']]] for v in ['C1','C2','C3']]).flatten()
+    ESTbuildings = np.array([[[[x+'_'+v+'_'+y+'_'+z for x in ['EST',] for y in ['Dynamic','Static']] for z in ['20','100','200']]] for v in ['T1','T2','T3', 'T4', 'T5', 'T6', 'T7']]).flatten()
     Allbuildings = np.concatenate((RCbuildings, ESTbuildings))
     
     for building_type in Allbuildings:
-        SSP1 =building_type+'_SSP1'
-        SSP3 =building_type+'_SSP3'
+        SSP1 =building+'_SSP1'
+        SSP2 =building+'_SSP2'
+        SSP3 =building+'_SSP3'
 
-        low_error = Results['Net'][building_type]-Results['Net'][SSP3]
-        high_error = -Results['Net'][building_type]+Results['Net'][SSP1]
+        low_error = Results['Net'][SSP2]-Results['Net'][SSP3]
+        high_error = -Results['Net'][SSP2]+Results['Net'][SSP1]
 
         # round to zero if negligible error 
         low_error = 0 if abs(low_error)<0.05 else low_error
@@ -440,7 +441,7 @@ if ind_GWP:
 
     Errors = pd.DataFrame({'Low_Error':Low_Error,
                             'High_Error':High_Error},
-                            index=Allbuildings)
+                            index=[f"{bt}_SSP2" for bt in Allbuildings])
 
     Results=Results.merge(Errors, how='left', left_index=True, right_index=True)
     Results = Results.fillna(0)
