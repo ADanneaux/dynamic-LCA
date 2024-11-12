@@ -34,9 +34,9 @@ def plot_carbon_decay(building_type,f_C, f_C_Carb_notdivided, f_C_G_notdivided, 
 
     fig.add_trace(go.Scatter(x=t_TOD, y=1e-6*f_C['EOL'][:len(t_TOD)], mode='lines', name='End-of-life non-biogenic', line=dict(color='rgba(55, 55, 55, 0.99)', width=marker_line_width), fill='tozeroy',  fillcolor='rgba(55, 55, 55, 0.3)'))
 
-    fig.add_trace(go.Scatter(x=t_TOD, y=1e-6*f_C['CRE'][:len(t_TOD)], mode='lines', name='End-of-life substitution non-biogenic', line=dict(color='rgba(180, 96, 224, 0.99)', dash='dot', width=marker_line_width), fill='tozeroy',  fillcolor='rgba(180, 96, 224, 0.3)'))
-
     fig.add_trace(go.Scatter(x=t_TOD, y=1e-6*f_C_G_credit_notdivided[:len(t_TOD)], mode='lines', name='End-of-life substitution biogenic', line=dict(color='rgba(97, 167, 225, 0.99)', dash='dot', width=marker_line_width), fill='tozeroy',  fillcolor='rgba(97, 167, 225, 0.3)'))
+
+    fig.add_trace(go.Scatter(x=t_TOD, y=1e-6*f_C['CRE'][:len(t_TOD)], mode='lines', name='End-of-life substitution non-biogenic', line=dict(color='rgba(180, 96, 224, 0.99)', dash='dot', width=marker_line_width), fill='tozeroy',  fillcolor='rgba(180, 96, 224, 0.3)'))
 
     # Net
     fig.add_trace(go.Scatter(x=t_TOD, y=1e-6*f_C['Net'][:len(t_TOD)], mode='lines', name='Net', line=dict(color='rgb(240, 74, 0)', dash='dash', width=marker_line_width), showlegend=False))
@@ -118,9 +118,9 @@ def plot_carbon_decay(building_type,f_C, f_C_Carb_notdivided, f_C_G_notdivided, 
             traceorder="normal",
             orientation="h",
             yanchor="bottom",
-            y=1.125,
+            y=1.025,
             xanchor="right",
-            x=1.125,
+            x=1,
             font=dict(
                 family=fontfamily,
                 size=ofs,
@@ -153,27 +153,40 @@ def plot_carbon_decay(building_type,f_C, f_C_Carb_notdivided, f_C_G_notdivided, 
 
     fig.update_yaxes(zeroline=True, zerolinewidth=1, zerolinecolor='black')
 
-    fig.update_layout(
-    title=building_type,
-    title_x=0.13,
-    title_y=0.6425,
-    title_font=dict(size=tfs, color='black', family=f"{fontfamily},bold"))
+#     # Add annotation
+#     fig.add_annotation(
+#     x=-0.1625, 
+#     y=1.6975,
+#     text='<b>b<b>',
+#     showarrow=False,
+#     xref='paper',
+#     yref='paper',
+#     align='left',
+#     font=dict(family=fontfamily, size=tfs+8, color="black")
+# )
+
+#     fig.update_layout(
+#     title='<b>EST-T6<b>',
+#     title_x=0.13,
+#     title_y=0.7175,
+#     title_font=dict(size=tfs, color='black', family=f"{fontfamily},bold"))
     
     fig.show()
 
-    directory = "../figures/decay/html"
+    directory = "../output/figures/decay/html"
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    directory = "../figures/decay/img"
+    directory = "../output/figures/decay/img"
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     # Save the figure as an html file
-    fig.write_html("../figures/decay/html/CO2decay-"+building_type+".html")
+    fig.write_html("../output/figures/decay/html/CO2decay-"+building_type+".html")
 
     # Save the figure as an html file
-    fig.write_image("../figures/decay/img/CO2decay-"+building_type+".jpg", scale=scale, engine='orca')
+    fig.write_image("../output/figures/decay/img/CO2decay-"+building_type+".pdf", scale=scale, engine='orca')
+    fig.write_image("../output/figures/decay/img/CO2decay-"+building_type+".jpg", scale=scale, engine='orca')
 
     return fig
 
@@ -209,9 +222,9 @@ def plot_methane_decay(building_type,f_M, t_TOD):
 
     fig.add_trace(go.Scatter(x=t_TOD, y=1e-3*f_M['EOL'][:len(t_TOD)], mode='lines', name='End-of-life non-biogenic', line=dict(color='rgba(55, 55, 55, 0.99)', width=marker_line_width), fill='tozeroy',  fillcolor='rgba(55, 55, 55, 0.3)'))
 
-    fig.add_trace(go.Scatter(x=t_TOD, y=1e-3*f_M['CRE'][:len(t_TOD)], mode='lines', name='End-of-life substitution non-biogenic', line=dict(color='rgba(180, 96, 224, 0.99)', dash='dot', width=marker_line_width), fill='tozeroy',  fillcolor='rgba(180, 96, 224, 0.3)'))
-
     fig.add_trace(go.Scatter(x=t_TOD, y=1e-3*f_M['EOL_bio_credit_notdivided'][:len(t_TOD)], mode='lines', name='End-of-life substitution biogenic', line=dict(color='rgba(97, 167, 225, 0.99)', dash='dot', width=marker_line_width), fill='tozeroy',  fillcolor='rgba(97, 167, 225, 0.3)'))
+
+    fig.add_trace(go.Scatter(x=t_TOD, y=1e-3*f_M['CRE'][:len(t_TOD)], mode='lines', name='End-of-life substitution non-biogenic', line=dict(color='rgba(180, 96, 224, 0.99)', dash='dot', width=marker_line_width), fill='tozeroy',  fillcolor='rgba(180, 96, 224, 0.3)'))
 
     # Net
     fig.add_trace(go.Scatter(x=t_TOD, y=1e-3*f_M['Net'][:len(t_TOD)], mode='lines', name='Net', line=dict(color='rgb(240, 74, 0)', dash='dash', width=marker_line_width), showlegend=False))
@@ -290,11 +303,11 @@ def plot_methane_decay(building_type,f_M, t_TOD):
         #showlegend=False,
         legend=dict(
             traceorder="normal",
-            orientation="v",
+            orientation="h",
             yanchor="bottom",
-            y=1.125,
+            y=1.025,
             xanchor="right",
-            x=1.125,
+            x=1,
             font=dict(
                 family=fontfamily,
                 size=ofs,
@@ -327,26 +340,39 @@ def plot_methane_decay(building_type,f_M, t_TOD):
 
     fig.update_yaxes(zeroline=True, zerolinewidth=1, zerolinecolor='black')
 
-    fig.update_layout(
-    title=building_type,
-    title_x=0.1075,
-    title_y=0.6425,
-    title_font=dict(size=tfs, color='black', family=fontfamily))
+#     # Add annotation
+#     fig.add_annotation(
+#     x=-0.1225, 
+#     y=1.6775,
+#     text='<b>b<b>',
+#     showarrow=False,
+#     xref='paper',
+#     yref='paper',
+#     align='left',
+#     font=dict(family=fontfamily, size=tfs+8, color="black")
+# )
+
+#     fig.update_layout(
+#     title='<b>EST-T6<b>',
+#     title_x=0.1075,
+#     title_y=0.7175,
+#     title_font=dict(size=tfs, color='black', family=f"{fontfamily},bold"))
 
     fig.show()
 
-    directory = "../figures/decay/html"
+    directory = "../output/figures/decay/html"
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    directory = "../figures/decay/img"
+    directory = "../output/figures/decay/img"
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     # Save the figure as an html file
-    fig.write_html("../figures/decay/html/CH4decay-"+building_type+".html")
+    fig.write_html("../output/figures/decay/html/CH4decay-"+building_type+".html")
 
     # Save the figure as an html file
-    fig.write_image("../figures/decay/img/CH4decay-"+building_type+".jpg", scale=scale, engine='orca')
+    fig.write_image("../output/figures/decay/img/CH4decay-"+building_type+".pdf", scale=scale, engine='orca')
+    fig.write_image("../output/figures/decay/img/CH4decay-"+building_type+".jpg", scale=scale, engine='orca')
 
     return fig

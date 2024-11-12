@@ -3,7 +3,7 @@
 
 This code is used to performed a comparative dynamic life cycle analysis of two equivalent buildings made of reinforced concrete or engineered timber. 
 
-It was developped for the following study: *Dynamic LCA of reinforced concrete and engineered timber buildings: special focus on carbonation and biogenic carbon* Yayla et al (unpublished)
+It was developped for the following study: *Hidden climate change impacts of timber cities* Yayla et. al. (unpublished)
 
 ## Disclaimer
 The module is still in development.
@@ -17,7 +17,23 @@ The main code loops through each building types. For each it places start and en
 
 Figures can be plotted using additional codes.
 
-Outputs data are returned to `/Outputs`, and figures to `/figures`
+Outputs data are returned to `/outputs/results`, and figures to `/outputs/figures`
+
+### System requirements
+
+This dynamic-LCA code requires only a standard computer with enough RAM to support the in-memory operations. The code has been tested on Microsoft Windows 11 Pro, x64-based processor, and 32.0 GB of installed RAM.
+
+#### Python dependencies
+
+```
+pandas
+numpy
+scipy.stats
+datetime
+os
+matplotlib
+plotly
+```
 
 ## References
 [^1]: Joos, F. et al. Carbon dioxide and climate impulse response functions for the computation of greenhouse gas metrics: a multi-model analysis. *Atmos Chem Phys 13, 2793-2825 (2013). https://doi.org/10.5194/acp-13-2793-2013

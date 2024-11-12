@@ -27,7 +27,7 @@ MCO2 = 44.01          #[g/mol]
 R = 82.06 
 
 raw_data_path = os.path.join("..","..","raw_data")
-output_path = os.path.join("..","..","data")
+output_path = os.path.join("..","..","generated_data")
 
 #%% Import concentration pathways
 # Pathways are SSP concentration pathways extended to 2500 by Meinshausen, Malte, Zebedee R. J. Nicholls, Jared Lewis, Matthew J. Gidden, Elisabeth Vogel, Mandy Freund, Urs Beyerle, et al. ‘The Shared Socio-Economic Pathway (SSP) Greenhouse Gas Concentrations and Their Extensions to 2500’. Geoscientific Model Development 13, no. 8 (13 August 2020): 3571–3605. https://doi.org/10.5194/gmd-13-3571-2020.

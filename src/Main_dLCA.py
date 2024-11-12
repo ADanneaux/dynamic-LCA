@@ -20,8 +20,7 @@ from matplotlib import ticker
 # Importing modules
 import core_modules.core_utilities as cu
 import core_modules.core_climate as cc
-
-from core_modules.decay_plot_functions import plot_carbon_decay, plot_methane_decay
+import core_modules.core_decay_plot_functions as cp
 
 # Formatting
 matplotlib.rcParams['font.family'] = 'arial'
@@ -36,16 +35,14 @@ date = str(date.year)+str(date.month)+str(date.day)
 
 #%% Analysis type
 
-ind_GWP = True
+ind_GWP = False
 ind_AGTP = not ind_GWP #Set so code does not calculate GWP and AGTP at the same time which would take a long time
-ind_plot = False
-
+ind_plot = True
 
 #%%Importing Data
 
-input_path = os.path.join('..','data')
-output_path = os.path.join('..','output')
-
+input_path = os.path.join('..','generated_data')
+output_path = os.path.join('..','output/results')
 
 K119       = pd.read_csv(os.path.join(input_path,'K119.csv')).values
 K126       = pd.read_csv(os.path.join(input_path,'K126.csv')).values
@@ -78,12 +75,10 @@ Fd_EOL3_LC3 = [Fd_Lan_LC3[x]*0.213+Fd_EOL_LC3[x]*0.787 for x in range(0,len(Fd_R
 Cemtype =[0         ,0          ,0          ,1          ,1          ,1]
 LFD     =[Fd_EOL    ,Fd_Lan     ,Fd_EOL3    ,Fd_EOL_LC3 ,Fd_Lan_LC3 ,Fd_EOL3_LC3 ]
 
-
 #%%Constant parameters
 MCar2  = [130.6/0.8,71.82088/0.8]
 ConcreteVolume = 1169.456 #[m3]
 kSCM = [1,1.7]
-
 
 TOD = 500           #[years]
 r = 100            #[years]
@@ -97,7 +92,6 @@ dt = t_TOD[1]-t_TOD[0]
 rf_CO2, rf_CH4, rf_N2O=cc.define_rf()
 Rt = cc.define_rt(t_TOD)
 
-
 #%% =========== Convolution functions ===========
 yCO2_TOD = cc.decay_function('CO2',t_TOD)
 
@@ -105,10 +99,6 @@ Empty_pulse = 0*t_TOD
 
 SSPn = ['1-19','2-45','4-85']
 name_array = []
-
-
-
-
 
 #%% Looping through buildings
 # import importlib
@@ -125,11 +115,9 @@ GWP_MN_array = []
 GWP_Net_array = []
 AGTP_results = pd.DataFrame()
 
-
-
 building_types = list(LCI_data.columns)
 
-for building_type in building_types[1:2]:
+for building_type in building_types[2:3]:
     print(building_type)
     Dynamic = bool(LCI_data.loc['Dynamic',building_type])
     SSP = int(LCI_data[building_type]['SSP'])
@@ -173,8 +161,6 @@ for building_type in building_types[1:2]:
     Mmax = MCar*ConcreteVolume
 
     Fd = [x for x in LFD[LFD_index]]
-    
-
 
     #Loop dependent Time parameters
     t = t_TOD[t_TOD<=THI]
@@ -186,25 +172,21 @@ for building_type in building_types[1:2]:
         denom.append(denom[x-1]+yCO2_TOD[x])
     denom = np.array(denom)
 
-    denom0   = float(denom[t_TOD==0+THI])
-
+    denom0   = float(denom[t_TOD==0+THI][0])
 
     denomz = {}
     denomz['SOL'] = denom0
-    denomz['EOL'] = float(denom[t_TOD==Life+THI])
-    denomz['incineration_pulse'] = float(denom[t_TOD==Life+THI])
+    denomz['EOL'] = float(denom[t_TOD==Life+THI][0])
+    denomz['incineration_pulse'] = float(denom[t_TOD==Life+THI][0])
     denomz['CRE'] = float(denom[int((Life+TexposureEOL)/dt)])
     denomz['EOL_bio_emissions'] = 1 # Denominator is included when calculating fv
     denomz['EOL_bio_credit']    = 1 # Denominator is included when calculating f
     denom    = denom[t_TOD>=THI]
 
-
     yCO2 = cc.decay_function('CO2',t)
     yCH4 = cc.decay_function('CH4',t)
     yN2O = cc.decay_function('N2O',t)
 
-
-    
     # Initiate emissions dictionnaries
     Emissions_C = cu.set_emissions(Data_C)
     Emissions_M = cu.set_emissions(Data_M)
@@ -215,8 +197,6 @@ for building_type in building_types[1:2]:
     Pulse_C = cu.place_emissions_in_pulse(Emissions_C, t_TOD, Life, Dynamic)
     Pulse_M = cu.place_emissions_in_pulse(Emissions_M, t_TOD, Life, Dynamic)
     Pulse_N = cu.place_emissions_in_pulse(Emissions_N, t_TOD, Life, Dynamic)
-
-    
 
     # =========== Carbonation ===========
 
@@ -234,14 +214,14 @@ for building_type in building_types[1:2]:
     dMdtSSP = []
 
     # Assessing effect of future CO2 concentration on carbonation
-    K = [K119,K245,K485][SSP]
+    K = [K119,K245,K370][SSP]
     for j in range(0,len(denom)):
         dMdt.append((M[j+1]-M[j]))
         dMdtSSP.append(dMdt[j]*K[j])
 
     MSSP = [0]
     for j in range(0,len(denom)):
-        MSSP.append(float(MSSP[-1]+dMdtSSP[j]))
+        MSSP.append(float((MSSP[-1] + dMdtSSP[j]).item()))
 
     MSSP = np.array(MSSP)
 
@@ -256,21 +236,17 @@ for building_type in building_types[1:2]:
 
     dMdtSSP_for_GWP_L   = [0 if t_TOD[x]>Life-2*dt else dMdtSSP_for_GWP[x] for x in range(len(dMdtSSP_for_GWP)) ]
     dMdtSSP_for_GWP_EOL = [0 if t_TOD[x]<=Life-2*dt else dMdtSSP_for_GWP[x] for x in range(len(dMdtSSP_for_GWP)) ]
-    
- 
+
     # =========== Biomass Sink = Gaussian ===========
     mu, sigma = r/2, r/4
     g = - dt*Data_C['Biopulse']*norm.pdf(t_TOD,mu,sigma)
     g_credit = dt*Data_C['Biopulse']*norm.pdf(t_TOD-Life,mu,sigma)*recycling_share
     g_credit[t_TOD<s]=0
 
-
     g_for_GWP = np.array(g[:len(denom)])/np.array(denom)
     g_credit_for_GWP  = np.array(g_credit[:len(denom)])/np.array(denom)
     # =========== Lanfill decay ===========
     EoL_decay_f = cc.EOL_decay_functions(t_TOD,s,dt)
-
-
 
     #Methane heat + electricity co-production (EcoInvent): 
     # 0.249 m3 of natural gas= 3.6 MJ elec + 1.63 MJ heat
@@ -280,7 +256,6 @@ for building_type in building_types[1:2]:
     Data_M['EOL_bio_credit']=-1.37E-06   #tonnes of CH4/MJ of energy
     Data_N['EOL_bio_credit']=-4.27E-09  #tonnes of N2O/MJ of energy
 
-
     Emissions_C['EOL_bio_emissions'] = degradable_carbon*(3.67) * (landfill_Ashare*10/100+ landfill_Bshare*99.7/100+ landfill_Cshare*99.995/100)
     Emissions_M['EOL_bio_emissions'] = degradable_carbon*(1.33) * (landfill_Ashare*90/100+ landfill_Bshare*0.03/100+ landfill_Cshare*0.005/100)
     Emissions_N['EOL_bio_emissions'] = 0
@@ -289,21 +264,16 @@ for building_type in building_types[1:2]:
     Emissions_M['EOL_bio_credit'] = degradable_carbon*(1.33)/CH4_burning*Data_M['EOL_bio_credit']*landfill_Cshare
     Emissions_N['EOL_bio_credit'] = degradable_carbon*(1.33)/CH4_burning*Data_N['EOL_bio_credit']*landfill_Cshare
 
-
     for pulse in ['EOL_bio_emissions','EOL_bio_credit']:
         Pulse_C[pulse]=Emissions_C[pulse]*EoL_decay_f
         Pulse_M[pulse]=Emissions_M[pulse]*EoL_decay_f
         Pulse_N[pulse]=Emissions_N[pulse]*EoL_decay_f
-
-
-    
 
     # =========== Emission Decay ===========
 
     f_C =cu.create_basic_convolution(yCO2,Pulse_C)
     f_M =cu.create_basic_convolution(yCH4,Pulse_M)
     f_N =cu.create_basic_convolution(yN2O,Pulse_N)
-
 
     if Dynamic:
         # =========== Convoluting the carbonation sink===========
@@ -322,8 +292,7 @@ for building_type in building_types[1:2]:
         f_C = cu.EOL_bio_convolutions(f_C,yCO2,Pulse_C,denom)
         f_M = cu.EOL_bio_convolutions(f_M,yCH4,Pulse_M,denom)
         f_N = cu.EOL_bio_convolutions(f_N,yN2O,Pulse_N,denom)
-        
-        
+
         # =========== GWP composition ===========
         GWP_Carb_L = np.sum(f_C_Carb_L)
         GWP_Carb_EOL = np.sum(f_C_Carb_EOL)
@@ -341,7 +310,6 @@ for building_type in building_types[1:2]:
         f_N = cu.calculate_f_net(f_N,t_TOD)
 
         f_C['Net'] += f_C_Carb_notdivided[:len(t_TOD)] + f_C_G_notdivided[:len(t_TOD)] + f_C_G_credit_notdivided[:len(t_TOD)]
-
 
     else:
         # =========== Convoluting the carbonation sink===========
@@ -410,7 +378,6 @@ for building_type in building_types[1:2]:
 
         GWP = GWP_Carb_L + GWP_Carb_EOL + GWP_C + GWP_M +  GWP_N + GWP_G
 
-        
     if ind_AGTP:
         RF_net = f_C['Net']*rf_CO2 + f_M['Net']*rf_CH4 + f_N['Net']*rf_N2O
         AGTP = np.convolve(Rt,RF_net)
@@ -426,12 +393,11 @@ for building_type in building_types[1:2]:
         GWP_N_array.append(GWP_N)
         GWP_MN_array.append(GWP_M +  GWP_N)
         GWP_Net_array.append(GWP)
-
     
     # =========== Plotting Carbon decay ===========
     if ind_plot:
-        plot_carbon_decay(building_type,f_C,f_C_Carb_notdivided,f_C_G_notdivided,f_C_G_credit_notdivided,t_TOD)
-        plot_methane_decay(building_type,f_M,t_TOD)    
+        cp.plot_carbon_decay(building_type,f_C,f_C_Carb_notdivided,f_C_G_notdivided,f_C_G_credit_notdivided,t_TOD)
+        cp.plot_methane_decay(building_type,f_M,t_TOD)
 
 #%%
 
@@ -460,9 +426,9 @@ if ind_GWP:
     
     for building_type in Allbuildings:
         SSP1 =building_type+'_SSP1'
-        SSP5 =building_type+'_SSP4'
+        SSP3 =building_type+'_SSP3'
 
-        low_error = Results['Net'][building_type]-Results['Net'][SSP5]
+        low_error = Results['Net'][building_type]-Results['Net'][SSP3]
         high_error = -Results['Net'][building_type]+Results['Net'][SSP1]
 
         # round to zero if negligible error 
@@ -484,7 +450,3 @@ if ind_GWP:
 if ind_AGTP:
     AGTP_results['T']=t_TOD[t_TOD<300]
     AGTP_results.to_csv(os.path.join(output_path,'AGTP_results.csv'))
-#%%
-Results = np.array([building_types,GWP_C_net_array,GWP_M_array,GWP_N_array,GWP_L_carb_array,GWP_EOL_carb_array,GWP_MN_array,GWP_Net_array])
-np.savetxt(os.path.join(output_path,'Results.csv'), Results, delimiter=',', fmt='%s')
-# %%

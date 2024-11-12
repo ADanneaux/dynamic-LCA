@@ -10,8 +10,8 @@ This code takes SOL and EOL data and returns the list of scenarios to be tested 
 import pandas as pd
 import os
 
-raw_data_path = os.path.join("..","raw_data")
-treated_data_path = os.path.join("..","data")
+raw_data_path = os.path.join("..", "..","raw_data")
+treated_data_path = os.path.join("..", "..","generated_data")
 
 LCI_SOL = pd.read_csv(os.path.join(raw_data_path,'LCI_SOL.csv'),index_col=0)
 LCI_EOL = pd.read_csv(os.path.join(raw_data_path,'LCI_EOL.csv'),index_col=0)
@@ -54,19 +54,19 @@ LFD_index = {
 
 
 
-#%% Defining the dataframe 
+#%% Defining the dataframe
 building_types = [x+'_'+y for x in ['BAU','LC3'] for y in ['C1','C2','C3']] + ['EST_T'+str(x) for x in range(1,8)]
 
 def filling_scenario(Data,scenario,Dynamic,THI,SSP,TexposureEOL):
-    SOL = scenario.split('_')[0] 
+    SOL = scenario.split('_')[0]
     EOL = scenario.split('_')[1]
-    
+
     Data.loc['Dynamic',scenario] = int(Dynamic)
     Data.loc['THI',scenario] = int(THI)
     Data.loc['SSP',scenario] = int(SSP)
-    
+
     Data.loc['C_Pine_Mass',scenario] = C_Pine_Mass[SOL]
-    
+
     for index in LCI_SOL.index:
         Data.loc[index,scenario] = LCI_SOL.loc[index,SOL]
     for index in LCI_EOL.index:
@@ -89,19 +89,19 @@ def filling_scenario(Data,scenario,Dynamic,THI,SSP,TexposureEOL):
         Data.loc['recycling_share',scenario]   = 0.09
         Data.loc['incineration_share',scenario]= 0.18
     else:
-        Data.loc['landfill_Ashare',scenario]  = 1 if EOL=='T4' else 0 
+        Data.loc['landfill_Ashare',scenario]  = 1 if EOL=='T4' else 0
         Data.loc['landfill_Bshare',scenario]  = 1 if EOL=='T5' else 0
         Data.loc['landfill_Cshare',scenario]  = 1 if EOL=='T6' else 0
         Data.loc['recycling_share',scenario]   = 1 if EOL in ['T2','T3']  else 0
         Data.loc['incineration_share',scenario]= 1 if EOL=='T1' else 0
 
-    Data.loc['TexposureEOL',scenario] = TexposureEOL  
+    Data.loc['TexposureEOL',scenario] = TexposureEOL
     return Data
 # %% Scenario_LCI
 Data = pd.DataFrame()
 for Dynamic, method in enumerate(['Static','Dynamic']):
-    for ind_SSP, SSP in enumerate(["_SSP1","","_SSP5"]):
-        for THI in [100,200]:
+    for ind_SSP, SSP in enumerate(["_SSP1","_SSP2","_SSP3"]):
+        for THI in [20,100,200]:
             for ind_building, building in enumerate(building_types):
                 scenario = building+'_'+method+'_'+str(THI)+SSP
                 print(scenario)
@@ -115,7 +115,7 @@ if not os.path.exists(directory):
 Data.to_csv(os.path.join(treated_data_path,'Scenario_LCI.csv'),index=True)
 # %% Input_AGTP
 Data = pd.DataFrame()
-for ind_SSP, SSP in enumerate(["_SSP1","","_SSP5"]):
+for ind_SSP, SSP in enumerate(["_SSP1","_SSP2","_SSP3"]):
     for TexposureEOL in [0.25,5,10]:
         for ind_building, building in enumerate(building_types):
             Dynamic = 1
