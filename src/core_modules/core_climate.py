@@ -58,7 +58,7 @@ def decay_function(molecule: str,t) -> list:
     Calculate the decay function for a given gas along a time serie
     """
     if molecule == "CO2":
-        y  = [A0+A1*np.exp2(-(x)/tau1)+A2*np.exp2(-(x)/tau2)+A3*np.exp2(-(x)/tau3) for x in t]
+        y  = [A0+A1*np.exp(-(x)/tau1)+A2*np.exp(-(x)/tau2)+A3*np.exp(-(x)/tau3) for x in t]
     elif molecule == "CH4":
         y = [np.exp(-(x)/tau_CH4) for x in t]
     elif molecule == "N2O":
