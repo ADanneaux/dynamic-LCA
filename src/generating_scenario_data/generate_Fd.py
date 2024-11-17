@@ -12,11 +12,11 @@ This is calculated for different cement type and different EOL method
 import numpy as np
 
 # ============ Time parameters ===========
-TH = 500           #[years]
-r = 200            #[years]
-storage = 0        #[years]
-Life = 100         #[years]
-TexposureEOL = 50 #[years]
+TH = 500            #[years]
+r = 200             #[years]
+storage = 0         #[years]
+Life = 100          #[years]
+TexposureEOL = 0.25 #[years]
 n = TH*200+1
 t = np.linspace(0,TH,n) 
 

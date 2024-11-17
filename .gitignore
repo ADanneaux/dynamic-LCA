@@ -1,11 +1,11 @@
 *.ipynb
-*.csv
+#*.csv
 
 # Ignoring source data
-*.xlsx
+#*.xlsx
 
 # Keeping raw_data csv
-!raw_data/*.csv
+#!raw_data/*.csv
 
 **/.svn/
 
@@ -27,3 +27,4 @@ desktop.ini
 *.tmp                   
 # Ignore IDE/project files
 .vscode/                
+output/results/AGTP_results.csv
