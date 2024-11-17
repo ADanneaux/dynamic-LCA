@@ -48,19 +48,19 @@ B = {
 kSCM = [1,1.7]
 
 
-def uncarbonated(Fd,a,b,Do):
+def uncarbonated(Fdn,a,b,Do):
     """
     Calculates part-wise integration of uncarbonated concrete. (model from Xi et al (2016))
     Concrete is assumed to be crushed into spherical particles
     This function calculates the carbonation progress of the share of particles with diameters ranging from a to b.
     """
     if a>=Do[j]:
-        Fd.append(1-(b**4-a**4-4*Do[j]*(b**3-a**3)+6*Do[j]**2*(b**2-a**2)-4*Do[j]**3*(b-a))/(b**4-a**4))
+        Fdn.append(1-(b**4-a**4-4*Do[j]*(b**3-a**3)+6*Do[j]**2*(b**2-a**2)-4*Do[j]**3*(b-a))/(b**4-a**4))
     elif a<Do[j] and b>Do[j]:
-        Fd.append(1-(b**4-Do[j]**4-4*Do[j]*(b**3-Do[j]**3)+6*Do[j]**2*(b**2-Do[j]**2)-4*Do[j]**3*(b-Do[j]))/(b**4-a**4))
+        Fdn.append(1-(b**4-Do[j]**4-4*Do[j]*(b**3-Do[j]**3)+6*Do[j]**2*(b**2-Do[j]**2)-4*Do[j]**3*(b-Do[j]))/(b**4-a**4))
     else:
-        Fd.append(1)
-    return Fd
+        Fdn.append(1)
+    return Fdn
 
 for ind_type, type in enumerate(['RCA','Unbound','Landfill']):
     for ind_cem, cem_type in enumerate(['BAU','LC3']): 
@@ -75,7 +75,13 @@ for ind_type, type in enumerate(['RCA','Unbound','Landfill']):
         b3 = B[type][2]
         b4 = B[type][3]
 
-        Do = Fd = Fd1 = Fd2 = Fd3 = Fd4 = Fd5 = []
+        Do = []
+        Fd = []
+        Fd1 = []
+        Fd2 = []
+        Fd3 = []
+        Fd4 = []
+        Fd5 = []
 
         for j in range(0,len(t)):
             if t[j]<Life:
@@ -83,15 +89,17 @@ for ind_type, type in enumerate(['RCA','Unbound','Landfill']):
             else:
                 Do.append(2*K*kSCM[ind_cem]*np.sqrt(t[j]-Life))
 
-        Fd1 = uncarbonated(Fd1,a1,b1,Do)
-        Fd2 = uncarbonated(Fd2,b1,b2,Do)
-        Fd3 = uncarbonated(Fd3,b2,b3,Do)
-        Fd4 = uncarbonated(Fd4,b3,b4,Do)
-        Fd5 = uncarbonated(Fd5,b4,a1,Do)
+            Fd1 = uncarbonated(Fd1,a1,b1,Do)
+            Fd2 = uncarbonated(Fd2,b1,b2,Do)
+            Fd3 = uncarbonated(Fd3,b2,b3,Do)
+            Fd4 = uncarbonated(Fd4,b3,b4,Do)
+            Fd5 = uncarbonated(Fd5,b4,a1,Do)
 
-        Fd.append(s1*Fd1[-1]+s2*Fd2[-1]+s3*Fd3[-1]+s4*Fd4[-1])
+            Fd.append(s1*Fd1[-1]+s2*Fd2[-1]+s3*Fd3[-1]+s4*Fd4[-1])
 
         np.savetxt('..\..\generated_data\Fd_'+type+'_'+cem_type+'.csv',np.array(Fd),delimiter=',')
 
         print (len(t))
         print(len(Fd))
+
+# %%
