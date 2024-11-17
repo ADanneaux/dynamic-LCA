@@ -381,7 +381,7 @@ for building_type in building_types[2:3]:
     if ind_AGTP:
         RF_net = f_C['Net']*rf_CO2 + f_M['Net']*rf_CH4 + f_N['Net']*rf_N2O
         AGTP = np.convolve(Rt,RF_net)
-        AGTP_results[building_type] = AGTP[0:len(t_TOD[t_TOD<300])]
+        AGTP_results[building_type] = AGTP[0:len(t_TOD[t_TOD<300])]*dt
 
     if ind_GWP:
         GWP_C_net_array.append(GWP_C+ GWP_G + GWP_Carb_L + GWP_Carb_EOL)
