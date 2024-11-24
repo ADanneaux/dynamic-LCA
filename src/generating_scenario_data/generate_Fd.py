@@ -64,10 +64,10 @@ def uncarbonated(Fdn,a,b,Do):
 
 for ind_type, type in enumerate(['RCA','Unbound','Landfill']):
     for ind_cem, cem_type in enumerate(['BAU','LC3']): 
-        s1=S[type][0]
-        s2=S[type][1]
-        s3=S[type][2]
-        s4=S[type][3]
+        s1=S[type][0]*1e-2
+        s2=S[type][1]*1e-2
+        s3=S[type][2]*1e-2
+        s4=S[type][3]*1e-2
 
         a1 = 0
         b1 = B[type][0]
@@ -98,7 +98,7 @@ for ind_type, type in enumerate(['RCA','Unbound','Landfill']):
             Fd.append(s1*Fd1[-1]+s2*Fd2[-1]+s3*Fd3[-1]+s4*Fd4[-1])
 
         np.savetxt('..\..\generated_data\Fd_'+type+'_'+cem_type+'.csv',np.array(Fd),delimiter=',')
-
+        
         print (len(t))
         print(len(Fd))
 
