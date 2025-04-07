@@ -1,6 +1,6 @@
 ## Dynamic life cycle assessment
 
-This repository contains the dynamic life cycle assessment (LCA) codebase, input data, and output data in the paper 'Net-zero timber cities critically depend on proactive resource management' by Yayla et al. 
+This repository contains the dynamic life cycle assessment (LCA) codebase and input data in the paper 'Net-zero timber cities critically depend on proactive resource management' by Yayla et al. 
 
 This study explores the long-term emissions/sinks and temperature rise in future cities under different forest/waste management scenarios, and it presents a novel dynamic LCA model coded in Python, which simulates the behaviour of the elementary flows during and after the lifespan of the buildings.
 
@@ -14,7 +14,7 @@ The model was implemented in Python (v3.9.16). All input and output datasets are
 
 ### System requirements
 
-This dynamic LCA code requires only a standard computer with enough RAM to support the in-memory operations. The code has been tested on Microsoft Windows 11 Pro, x64-based processor, and 32.0 GB of installed RAM.
+This dynamic LCA code requires only a standard computer with enough RAM to support the in-memory operations. The code has been tested on Microsoft Windows 11 Pro, x64-based processor, and 32.0 GB of installed RAM. A complete analysis of a region (i.e., including both GWP and AGTP results) typically takes about 1 hour and 30 minutes on a standard computer.
 
 ### Documentation and installation guide
 
@@ -42,7 +42,7 @@ The main code loops through each building type. For each, it places the start-of
 
 Figures can be plotted using additional codes. Output data are returned to `/output/results`, and figures to `/output/figures`. Unless otherwise stated in the output data tables, GWP results are in kilograms of carbon dioxide equivalent (kg CO<sub>2</sub>-eq.) and AGTP results are in Kelvin (K).
 
-### References
+#### References
 
 [^1]: Joos, F. et al. Carbon dioxide and climate impulse response functions for the computation of greenhouse gas metrics: a multi-model analysis. Atmos Chem Phys 13, 2793-2825 (2013). https://doi.org/10.5194/acp-13-2793-2013
 [^2]: Cherubini, F., Peters, G. P., Berntsen, T., Stromman, A. H. & Hertwich, E. CO<sub>2</sub> emissions from biomass combustion for bioenergy: atmospheric decay and contribution to global warming. Gcb Bioenergy 3, 413-426 (2011). https://doi.org/10.1111/j.1757-1707.2011.01102.x
