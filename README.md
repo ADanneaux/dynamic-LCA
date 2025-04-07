@@ -36,7 +36,7 @@ os
 
 ### Instructions
 
-The main analysis and plotting codes are stored in `/src`. Raw data are stored in `/raw_data`. The list of scenarios (building types, building numbers for regional analysis, and all other important parameters) can be built by running the `Jupyter Notebook` files in `/src/generating_scenario_data`, and these scenario data are stored in `/generated_data` to be used by `Main_dLCA.py`.
+The main analysis and plotting codes are stored in `/src`. Raw data are stored in `/raw_data`. The list of scenarios (building types, building numbers for regional analysis, and all other important parameters) can be built by running the `Jupyter Notebook` files in `/src/generating_scenario_data`, and these scenario data are stored in `/generated_data` to be used by `Main_dLCA.ipynb`.
 
 The main code loops through each building type. For each, it places the start-of-life and end-of-life emission pulse along a time series. Dynamic sinks (carbonation and forest regrowth) and emissions (landfill decay emissions) are also converted to a continuous series of pulses. These are then convoluted with greenhouse gas decay functions as defined by Joos et al.[^1] according to the method proposed by Cherubini et al.[^2]. A dynamic GWP indicator is then calculated based on the method by Ventura et al.[^3].  
 
