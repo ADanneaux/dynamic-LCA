@@ -42,7 +42,7 @@ The main code loops through each building type. For each, it places the start-of
 
 Figures can be plotted using additional codes. Output data are returned to `/output/results`, and figures to `/output/figures`. Unless otherwise stated in the output data tables, GWP results are in kilograms of carbon dioxide equivalent (kg CO<sub>2</sub>-eq.) and AGTP results are in Kelvin (K).
 
-#### References
+### References
 
 [^1]: Joos, F. et al. Carbon dioxide and climate impulse response functions for the computation of greenhouse gas metrics: a multi-model analysis. Atmos Chem Phys 13, 2793-2825 (2013). https://doi.org/10.5194/acp-13-2793-2013
 [^2]: Cherubini, F., Peters, G. P., Berntsen, T., Stromman, A. H. & Hertwich, E. CO<sub>2</sub> emissions from biomass combustion for bioenergy: atmospheric decay and contribution to global warming. Gcb Bioenergy 3, 413-426 (2011). https://doi.org/10.1111/j.1757-1707.2011.01102.x
