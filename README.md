@@ -6,9 +6,9 @@ This study explores the long-term emissions/sinks and temperature rise in future
 
 ### Overview
 
-This dynamic LCA model gives particular attention to the accurate modelling of urbanisation rate, CO<sub>2</sub> uptake from both biomass regrowth, carbonation of concrete, and destinations of building materials at end-of-life for future urban buildings. 
+This dynamic LCA model gives particular attention to the accurate modelling of urbanisation rate, destinations of building materials at end-of-life, and CO<sub>2</sub> uptake from both biomass regrowth, and carbonation of concrete, for future urban buildings. 
 
-The code also calculates atmospheric GHG concentration changes, and life cycle impact assessment (LCIA) indicators: static and dynamic global warming potential (GWP) for different time horizons (20, 100, and 200 years), and absolute global temperature potential (AGTP).
+The code also calculates atmospheric greenhouse gas (GHG) concentration changes, and life cycle impact assessment (LCIA) indicators: static and dynamic global warming potential (GWP) for different time horizons (20, 100, and 200 years), and absolute global temperature potential (AGTP).
 
 The model was implemented in Python (v3.9.16). All input and output datasets are stored in the data repository hosted on <a href="https://doi.org/10.5281/zenodo.13886867" target="_blank" style=" text-decoration: none !important; color:red !important;">Zenodo &#10140;</a>.
 
