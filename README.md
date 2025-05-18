@@ -1,6 +1,6 @@
 ## Dynamic life cycle assessment
 
-This repository contains the dynamic life cycle assessment (LCA) codebase and input data in the paper 'Net-zero timber cities critically depend on proactive resource management' by Yayla et al. 
+This repository contains the dynamic life cycle assessment (LCA) codebase and input data in the paper 'Net-zero timber cities critically depend on proactive forest and waste management' by Yayla et al. 
 
 This study explores the long-term emissions/sinks and temperature rise in future cities under different forest/waste management scenarios, and it presents a novel dynamic LCA model coded in Python, which simulates the behaviour of the elementary flows during and after the lifespan of the buildings.
 
