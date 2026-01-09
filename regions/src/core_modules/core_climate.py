@@ -92,6 +92,6 @@ def add_dynamic_GWP(f,denomz,rf):
     GWP = 0           
     for pulse in ['SOL',  'EOL', 'CRE','incineration_pulse']:
         GWP += np.sum(f[pulse])*rf/rf_CO2/denomz[pulse]
-    for pulse in ['EOL_bio_emissions','EOL_bio_credit']:   
+    for pulse in ['EOL_bio_emissions']:   
         GWP += np.sum(f[pulse])*rf/rf_CO2
     return GWP

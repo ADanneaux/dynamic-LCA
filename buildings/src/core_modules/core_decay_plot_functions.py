@@ -68,6 +68,10 @@ def plot_carbon_decay(building_type,f_C, f_C_Carb_notdivided, f_C_G_notdivided, 
         gridwidth=gridwidth,       # Set x-axis grid line width
         gridcolor='lightgray',     # Set y-axis grid line color
         ticklabelstep=1,           # Set y-axis tick label step
+        ticks='outside',
+        ticklen=7.5,
+        tickwidth=linewidth,
+        tickcolor="black",
         minor=dict(
             ticklen=0,
             tickcolor="lightgray",
@@ -100,6 +104,10 @@ def plot_carbon_decay(building_type,f_C, f_C_Carb_notdivided, f_C_G_notdivided, 
         gridwidth=gridwidth,       # Set y-axis grid line width
         gridcolor='lightgray',     # Set y-axis grid line color
         ticklabelstep=1,           # Set y-axis tick label step
+        ticks='outside',
+        ticklen=7.5,
+        tickwidth=linewidth,
+        tickcolor="black",
         minor=dict(
             ticklen=0,
             tickcolor="lightgray",
@@ -224,8 +232,6 @@ def plot_methane_decay(building_type,f_M, t_TOD):
 
     fig.add_trace(go.Scatter(x=t_TOD, y=1e-3*f_M['EOL'][:len(t_TOD)], mode='lines', name='End-of-life non-biogenic', line=dict(color='rgba(55, 55, 55, 0.99)', width=marker_line_width), fill='tozeroy',  fillcolor='rgba(55, 55, 55, 0.3)'))
 
-    fig.add_trace(go.Scatter(x=t_TOD, y=1e-3*f_M['EOL_bio_credit_notdivided'][:len(t_TOD)], mode='lines', name='End-of-life substitution biogenic', line=dict(color='rgba(97, 167, 225, 0.99)', dash='dot', width=marker_line_width), fill='tozeroy',  fillcolor='rgba(97, 167, 225, 0.3)'))
-
     fig.add_trace(go.Scatter(x=t_TOD, y=1e-3*f_M['CRE'][:len(t_TOD)], mode='lines', name='End-of-life substitution non-biogenic', line=dict(color='rgba(180, 96, 224, 0.99)', dash='dot', width=marker_line_width), fill='tozeroy',  fillcolor='rgba(180, 96, 224, 0.3)'))
 
     # Net
@@ -255,6 +261,10 @@ def plot_methane_decay(building_type,f_M, t_TOD):
         gridwidth=gridwidth,       # Set x-axis grid line width
         gridcolor='lightgray',     # Set y-axis grid line color
         ticklabelstep=1,           # Set y-axis tick label step
+        ticks='outside',
+        ticklen=7.5,
+        tickwidth=linewidth,
+        tickcolor="black",
         minor=dict(
             ticklen=0,
             tickcolor="lightgray",
@@ -287,6 +297,10 @@ def plot_methane_decay(building_type,f_M, t_TOD):
         gridwidth=gridwidth,       # Set y-axis grid line width
         gridcolor='lightgray',     # Set y-axis grid line color
         ticklabelstep=1,           # Set y-axis tick label step
+        ticks='outside',
+        ticklen=7.5,
+        tickwidth=linewidth,
+        tickcolor="black",
         minor=dict(
             ticklen=0,
             tickcolor="lightgray",
